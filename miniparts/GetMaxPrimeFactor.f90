@@ -4,9 +4,7 @@
 ! compiler : Fortran (gFortran 4.8.5)
 !
 ! [reference]
-! https://kimiyuki.net/writeup/algo/yukicoder/2/
-! https://densanken.com/wiki/index.php?Grundy%BF%F4
-! https://densanken.com/wiki/index.php?Nim
+! http://projecteuler.web.fc2.com/Problems/Problem3.html
 
 ! http://numerical.recipes/pubdom/nrtype.f90.txt
 MODULE nrtype
