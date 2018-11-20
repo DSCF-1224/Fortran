@@ -262,7 +262,7 @@ MODULE SuperSonicNozzle
 
 	CONTAINS
 
-	FUNCTION MachAngleRad( mach )
+	PURE FUNCTION MachAngleRad( mach )
 
 		! argument for this <FUNCTION>
 		DOUBLE PRECISION, INTENT(IN) :: mach ! mach number
@@ -274,6 +274,45 @@ MODULE SuperSonicNozzle
 		RETURN
 
 	END FUNCTION MachAngleRad
+
+
+
+	FUNCTION CalcCrossPoint( cdx, cdy, arg ) RESULT( CD_Crs )
+
+		! argument for this <FUNCTION>
+		DOUBLE PRECISION, DIMENSION(1:2), INTENT(IN) :: cdx ! x-coordinate of the cross point of line 1 and 2
+		DOUBLE PRECISION, DIMENSION(1:2), INTENT(IN) :: cdy ! y-coordinate of the cross point of line 1 and 2
+		DOUBLE PRECISION, DIMENSION(1:2), INTENT(IN) :: arg ! argument of line 1 and 2 [rad]
+
+		! return value of this <FUNCTION>
+		DOUBLE PRECISION, DIMENSION(1:2) :: CD_Crs ! coordinate of the cross point of line 1 and 2
+
+		! local variables for this <FUNCTION>
+		DOUBLE PRECISION, DIMENSION(1:2) :: Slp   ! Slp     of the line 1 and 2
+		DOUBLE PRECISION, DIMENSION(1:2) :: intrcpt ! intercept of the line 1 and 2
+		DOUBLE PRECISION                 :: buf
+
+		! support variables for this <FUNCTION>
+		INTEGER( KIND= 4 ) :: itr
+
+		! STEP.01
+		! calculate the Slp of line 1 and 2
+		Slp(:) = TAN( arg(:) )
+
+		! STEP.02
+		! calculate the Slp of line 1 and 2
+		FORALL ( itr=1:2:1 ) intrcpt(itr) = cdy(itr) - Slp(itr) * cdx(itr)
+
+		! STEP.03
+		! calculate the coordinate of the cross point
+		buf          = 1.0D+0 / ( Slp(2) - Slp(1) )
+		CD_Crs(1) = ( intrcpt(1) - intrcpt(2) ) * buf
+		CD_Crs(2) = ( intrcpt(1)*Slp(2) - intrcpt(2)*Slp(1) ) * buf
+
+		! STEP.END
+		RETURN
+
+	END FUNCTION CalcCrossPoint
 
 
 END MODULE SuperSonicNozzle
@@ -293,90 +332,367 @@ PROGRAM MAIN
 
 
 	! constants in this <PROGRAM>
-	DOUBLE PRECISION, PARAMETER :: CDX_start      = 0.0D+0 ! 
-	DOUBLE PRECISION, PARAMETER :: CDY_start      = 5.0D-1 !
-	DOUBLE PRECISION, PARAMETER :: CDX_end        = 0.0D+0 ! 
-	DOUBLE PRECISION, PARAMETER :: CDY_end        = 3.0D-1 !
-	DOUBLE PRECISION, PARAMETER :: sphr           = 1.4D+0 ! specific heat ratio [-]
-	DOUBLE PRECISION, PARAMETER :: MachNum_thrt   = 1.0D+0 ! Mach number at the throat of the Laval nozzle
-	DOUBLE PRECISION, PARAMETER :: MachNum_otlt   = 2.0D+0 ! Mach number at the outlet of the Laval nozzle
-	DOUBLE PRECISION, PARAMETER :: SlopeWall_thrt = 0.0D+0 ! slope of the nozzle wall at the throat of the Laval nozzle [rad]
-	DOUBLE PRECISION, PARAMETER :: SlopeWall_otlt = 0.0D+0 ! slope of the nozzle wall at the outlet of the Laval nozzle [rad]
+	DOUBLE PRECISION, PARAMETER :: CDX_Crs_start = 0.0D+0 ! 
+	DOUBLE PRECISION, PARAMETER :: CDY_Crs_start = 5.0D-1 !
+	DOUBLE PRECISION, PARAMETER :: CDX_Div_end   = 0.0D+0 ! 
+	DOUBLE PRECISION, PARAMETER :: CDY_Div_end   = 3.0D-1 !
+	DOUBLE PRECISION, PARAMETER :: sphr          = 1.4D+0 ! specific heat ratio [-]
+	DOUBLE PRECISION, PARAMETER :: MachNum_thrt  = 1.0D+0 ! Mach number at the throat of the Laval nozzle
+	DOUBLE PRECISION, PARAMETER :: MachNum_otlt  = 2.0D+0 ! Mach number at the outlet of the Laval nozzle
+	DOUBLE PRECISION, PARAMETER :: SlpWall_thrt  = 0.0D+0 ! Slp of the nozzle wall at the throat of the Laval nozzle [rad]
+	DOUBLE PRECISION, PARAMETER :: SlpWall_otlt  = 0.0D+0 ! Slp of the nozzle wall at the outlet of the Laval nozzle [rad]
 
-	INTEGER( KIND= 4 ), PARAMETER :: Num_MachLines_thrt = 10 ! the number of the Mach Lines at the throat
+	INTEGER( KIND= 4 ), PARAMETER :: Num_MachLines_thrt = 100 ! the number of the Mach Lines at the throat
 
 
 
 	! local variables in this <PROGRAM>
-	DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: CD_CrsPnt      ! coordinate of the cross points
-	DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: RiemannCnsvVal ! Riemann's conservation value
-	DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: SlopeCharLine  ! slope of the charastalic line
+	DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: CD_Crs      ! coordinate of the cross point of Mach lines
+	DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: CD_Div      ! coordinate of the dividing point of stream lines
+	DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: RmnnCnsvVal ! Riemann's conservation value
+	DOUBLE PRECISION, DIMENSION(:,:), ALLOCATABLE :: SlpCharLine ! Slp of the charastalic line
 
-	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: VelcAngl_Area  ! angle the the velocity vectors at the each area defined by Mach lines
-	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: MachAngl_Area  ! Mach angle at the each area defined by Mach lines [rad]
-	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: MachNum_Area   ! Mach number at the each area defined by Mach lines
-	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: PMfunc_Area    ! Prandtl-Meyer function at the each area defined by Mach lines
-	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: SlopeMachLine  ! slope of the Mach line [rad]
-	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: SlopeWall_Area ! slope of the nozzle wall [rad]
+	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: MachAng_Area ! Mach angle at the each area defined by Mach lines [rad]
+	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: MachNum_Area ! Mach number at the each area defined by Mach lines
+	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: PM_func_Area ! Prandtl-Meyer function at the each area defined by Mach lines
+	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: SlpMachLine  ! Slp of the Mach line [rad]
+	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: SlpWallArea  ! Slp of the nozzle wall [rad]
+	DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: VelcAng_Area ! angle the the velocity vectors at the each area defined by Mach lines
 
-	INTEGER( KIND= 4 ), PARAMETER :: Num_CrsPnts ! the number of total cross points
-	INTEGER( KIND= 4 ), PARAMETER :: Num_Areas   ! the number of the areas defined by Mach lines
+	INTEGER( KIND= 4 ) :: Num_Areas     ! the number of the areas defined by Mach lines
+	INTEGER( KIND= 4 ) :: Num_CrsPnts   ! the number of total cross points of Mach lines
+	INTEGER( KIND= 4 ) :: Num_DivPnts   ! the number of dividing points of stream lines
+	INTEGER( KIND= 4 ) :: Num_MachLines ! the number of total Mach lines
+	INTEGER( KIND= 4 ) :: itr
+	INTEGER( KIND= 4 ) :: itr_AreaLv1 
+	INTEGER( KIND= 4 ) :: itr_AreaLv2 
 
 
 
 	! support variables for this <PROGRAM>
+	INTEGER( KIND= 4 ) :: counter_Area, counter_CrsPnt
+	INTEGER( KIND= 4 ) :: counter0, counter1, counter2, counter3, counter4, counter5, counterS, counterB
 	INTEGER( KIND= 4 ) :: val_stat
+
+
+
+	!--- MAIN PROCESS ---!
 
 	! STEP.01
 	! allocation
-	Num_Areas   = ( Num_MachLines_thrt+1 )*( Num_MachLines_thrt*2 ) / 2
-	Num_CrsPnts = ( Num_MachLines_thrt+1 )*  Num_MachLines_thrt     / 2
+		Num_Areas     = ( Num_MachLines_thrt+1 )*( Num_MachLines_thrt+2 ) / 2
+		Num_CrsPnts   = ( Num_MachLines_thrt+1 )*  Num_MachLines_thrt / 2
+		Num_DivPnts   = Num_MachLines_thrt * 2
+		Num_MachLines = ( Num_MachLines_thrt+1 ) * Num_MachLines_thrt
 
-	ALLOCATE(      CD_CrsPnt(1:2,1:Num_CrsPnts), STAT= val_stat )
-	ALLOCATE( RiemannCnsvVal(1:2,1:Num_Areas),   STAT= val_stat )
-	ALLOCATE(  SlopeCharLine(1:2,1:Num_Areas),   STAT= val_stat )
+		PRINT '(A24,I)', 'number of divided areas', Num_Areas
+		PRINT '(A24,I)', 'number of Mach lines',    Num_MachLines
 
-	ALLOCATE(      VelcAngl_Area(1:Num_Areas),  STAT= val_stat )
-	ALLOCATE(       MachNum_Area(1:Num_Areas),  STAT= val_stat )
-	ALLOCATE(        PMfunc_Area(1:Num_Areas),  STAT= val_stat )
-	ALLOCATE( SlopeWall_rad_Area(1:Num_Areas),  STAT= val_stat )
+		ALLOCATE(      CD_Crs(1:2,1:Num_CrsPnts), STAT= val_stat )
+		ALLOCATE(      CD_Div(1:2,1:Num_DivPnts), STAT= val_stat )
+		ALLOCATE( RmnnCnsvVal(1:2,1:Num_Areas),   STAT= val_stat )
+		ALLOCATE( SlpCharLine(1:2,1:Num_Areas),   STAT= val_stat )
+
+		ALLOCATE( MachAng_Area(1:Num_Areas), STAT= val_stat )
+		ALLOCATE( MachNum_Area(1:Num_Areas), STAT= val_stat )
+		ALLOCATE( PM_func_Area(1:Num_Areas), STAT= val_stat )
+		ALLOCATE(  SlpMachLine(1:Num_Areas), STAT= val_stat )
+		ALLOCATE(  SlpWallArea(1:Num_Areas), STAT= val_stat )
+		ALLOCATE( VelcAng_Area(1:Num_Areas), STAT= val_stat )
+
+		PRINT '(A)', 'allocations of arrays have finished.'
+		! PRINT *, 'TEMPORARY STOP NOW'
+		! PRINT *, 'WAITING USER INPUT'
+		! READ *
 
 	! STEP.02
 	! calculation at the throat section of the nozzle
-	MachNum_Area( 1 )  = MachNum_thrt
-	VelcAngl_Area( 1 ) = SlopeWall_thrt
+		MachNum_Area( 1 ) = MachNum_thrt
+		VelcAng_Area( 1 ) = SlpWall_thrt
+		PM_func_Area( 1 ) = PMfuncRad( MACH= MachNum_Area( 1 ), SPHR= sphr )
+		MachAng_Area( 1 ) = MachAngleRad( MachNum_Area( 1 ) )
 
-	PMfunc_Area( 1 )   = PMfuncRad( MACH= MachNum_Area( 1 ), SPHR= sphr )
-	MachAngl_Area( 1 ) = MachAngleRad( MachNum_Area( 1 ) )
-
-	RiemannCnsvVal( 1, 1 ) = PMfunc_Area( 1 ) + MachAngl_Area( 1 ) ! left 
-	RiemannCnsvVal( 2, 1 ) = PMfunc_Area( 1 ) - MachAngl_Area( 1 ) ! right
-
-	SlopeCharLine( 1, 1 ) = VelcAngl_Area( 1 ) - MachAngl_Area( 1 ) ! left 
-	SlopeCharLine( 2, 1 ) = VelcAngl_Area( 1 ) + MachAngl_Area( 1 ) ! right
+		RmnnCnsvVal( 1, 1 ) = PM_func_Area( 1 ) - MachAng_Area( 1 ) ! Riemann left 
+		RmnnCnsvVal( 2, 1 ) = PM_func_Area( 1 ) + MachAng_Area( 1 ) ! Riemann right
+		SlpCharLine( 1, 1 ) = VelcAng_Area( 1 ) + MachAng_Area( 1 ) ! left  charastalic
+		SlpCharLine( 2, 1 ) = VelcAng_Area( 1 ) - MachAng_Area( 1 ) ! right charastalic
 
 	! STEP.03
 	! calculation at the outlet of the nozzle
-	MachNum_Area( Num_Areas )  = MachNum_otlt
-	VelcAngl_Area( Num_Areas ) = SlopeWall_otlt
+		MachNum_Area( Num_Areas ) = MachNum_otlt
+		VelcAng_Area( Num_Areas ) = SlpWall_otlt
+		PM_func_Area( Num_Areas ) = PMfuncRad( MACH= MachNum_otlt, SPHR= sphr )
+		MachAng_Area( Num_Areas ) = MachAngleRad( MachNum_otlt )
 
-	PMfunc_Area( Num_Areas )   = PMfuncRad( MACH= MachNum_Area( Num_Areas ), SPHR= sphr )
-	MachAngl_Area( Num_Areas ) = MachAngleRad( MachNum_Area( Num_Areas ) )
+		RmnnCnsvVal( 1, Num_Areas ) = PM_func_Area( Num_Areas ) - MachAng_Area( Num_Areas ) ! Riemann left 
+		RmnnCnsvVal( 2, Num_Areas ) = PM_func_Area( Num_Areas ) + MachAng_Area( Num_Areas ) ! Riemann right
+		SlpCharLine( 1, Num_Areas ) = VelcAng_Area( Num_Areas ) + MachAng_Area( Num_Areas ) ! left  charastalic
+		SlpCharLine( 2, Num_Areas ) = VelcAng_Area( Num_Areas ) - MachAng_Area( Num_Areas ) ! right charastalic
 
-	RiemannCnsvVal( 1, Num_Areas ) = PMfunc_Area( Num_Areas ) + MachAngl_Area( Num_Areas ) ! left 
-	RiemannCnsvVal( 2, Num_Areas ) = PMfunc_Area( Num_Areas ) - MachAngl_Area( Num_Areas ) ! right
+	! STEP.04
+	! calculation at Area No.2 to No.`N`+1
+	! `N` is the number of Mach line at the outlet of throat
 
-	SlopeCharLine( 1, Num_Areas ) = VelcAngl_Area( Num_Areas ) - MachAngl_Area( Num_Areas ) ! left 
-	SlopeCharLine( 2, Num_Areas ) = VelcAngl_Area( Num_Areas ) + MachAngl_Area( Num_Areas ) ! right
+		! STEP.04.01
+		! calculation at Area No.`N`+1
+		itr                   = Num_MachLines_thrt + 1
+		RmnnCnsvVal( 1, itr ) = RmnnCnsvVal( 1, 1         ) ! Riemann left 
+		RmnnCnsvVal( 2, itr ) = RmnnCnsvVal( 2, Num_Areas ) ! Riemann right
+		PM_func_Area(   itr ) = 5.0D-1 * ( RmnnCnsvVal( 2, itr ) + RmnnCnsvVal( 1, itr ) )
+		VelcAng_Area(   itr ) = 5.0D-1 * ( RmnnCnsvVal( 2, itr ) - RmnnCnsvVal( 1, itr ) )
+		MachNum_Area(   itr ) = iPMfuncBisection( RAD= PM_func_Area( itr ), SPHR= sphr )
+		MachAng_Area(   itr ) = MachAngleRad( MachNum_Area( itr ) )
+
+		! STEP.04.02
+		! calculation at Area No.2 to No.`N`
+		FORALL ( itr= 2:Num_MachLines_thrt:1 ) VelcAng_Area( itr ) = VelcAng_Area( Num_MachLines_thrt + 1 ) / REAL( Num_MachLines_thrt * itr, KIND= KIND( 1.0D+0 ) )
+		FORALL ( itr= 2:Num_MachLines_thrt:1 ) PM_func_Area( itr ) = RmnnCnsvVal( 2, 1 ) + VelcAng_Area( itr )
+
+		FORALL ( itr= 2:Num_MachLines_thrt:1 ) RmnnCnsvVal( 1, itr ) = VelcAng_Area( itr ) - PM_func_Area( itr ) ! Riemann left 
+		FORALL ( itr= 2:Num_MachLines_thrt:1 ) RmnnCnsvVal( 2, itr ) = VelcAng_Area( itr ) + PM_func_Area( itr ) ! Riemann right
+
+		DO itr = 2, Num_MachLines_thrt, 1
+			MachNum_Area( itr ) = iPMfuncBisection( RAD= PM_func_Area( itr ), SPHR= sphr )
+		ENDDO
+
+		FORALL ( itr= 2:Num_MachLines_thrt:1 ) MachAng_Area( itr ) = MachAngleRad( MachNum_Area( itr ) )
+
+	! STEP.05
+	! calculation at Area No.`N`+2 to No.`N_Area`+1
+	! `N`      is the number of Mach line at the outlet of throat
+	! `N_Area` is the number of the areas defined by Mach lines
+
+		! STEP.05.01
+		! initialization
+		counter_Area = 1
+
+		! STEP.05.02
+		DO itr_AreaLv1 = Num_MachLines_thrt+1, 1, -1
+
+			! STEP.05.02.01
+			! update the counter
+			counter_Area = counter_Area+1
+			IF( counter_Area .GT. Num_Areas ) EXIT
+
+			! STEP.05.02.03
+			! calculation on the center line of the nozzle
+			VelcAng_Area(   counter_Area ) = 0.0D+0
+			PM_func_Area(    counter_Area ) = RmnnCnsvVal( 2, counter_Area-(itr_AreaLv1-1) )
+			RmnnCnsvVal( 1, counter_Area ) = PM_func_Area( counter_Area ) ! Riemann left
+			RmnnCnsvVal( 2, counter_Area ) = PM_func_Area( counter_Area ) ! Riemann right
+			MachNum_Area(   counter_Area ) = iPMfuncBisection( RAD= PM_func_Area( counter_Area ), SPHR= sphr )
+			MachAng_Area(   counter_Area ) = MachAngleRad( MachNum_Area( counter_Area ) )
+
+			! STEP.05.02.03
+			! calculation on the wall of the nozzle
+			DO itr_AreaLv2 = 1, itr_AreaLv1-2, 1
+
+				RmnnCnsvVal( 1, counter_Area+1 ) = RmnnCnsvVal( 1, counter_Area               ) ! Riemann left
+				RmnnCnsvVal( 2, counter_Area+1 ) = RmnnCnsvVal( 2, counter_Area+2-itr_AreaLv2 ) ! Riemann right
+				PM_func_Area(    counter_Area+1 ) = 5.0D-1 * ( RmnnCnsvVal( 1, counter_Area+1 ) + RmnnCnsvVal( 2, counter_Area+1 ) )
+				VelcAng_Area(   counter_Area+1 ) = 5.0D-1 * ( RmnnCnsvVal( 1, counter_Area+1 ) - RmnnCnsvVal( 2, counter_Area+1 ) )
+				MachNum_Area(   counter_Area+1 ) = iPMfuncBisection( RAD= PM_func_Area( counter_Area+1 ), SPHR= sphr )
+				MachAng_Area(   counter_Area+1 ) = MachAngleRad( MachNum_Area( counter_Area+1 ) )
+
+			ENDDO
+
+
+		ENDDO
+
+	! STEP.06
+	! calculation the angles between `the center line of the nozzle` and `charastalic line`
+		DO itr_AreaLv1 = 2, Num_Areas-1, 1
+			SlpCharLine( 1, itr_AreaLv1 ) = VelcAng_Area( itr_AreaLv1 ) + MachAng_Area( itr_AreaLv1 ) ! between `the center line of the nozzle` and `LEFT  charastalic line`
+			SlpCharLine( 2, itr_AreaLv1 ) = VelcAng_Area( itr_AreaLv1 ) - MachAng_Area( itr_AreaLv1 ) ! between `the center line of the nozzle` and `RIGHT charastalic line`
+		ENDDO
+
+	! STEP.07
+	! calculation the Slp of the Mach lines at the each area defined by Mach lines
+
+		! STEP.07.01
+		! initialization of the counters
+		counter1 = 0
+		counter4 = 0
+		counter5 = Num_MachLines_thrt - 1
+
+		! STEP.07.02
+		! calculation the Slp of the Mach lines
+		DO itr_AreaLv1= Num_MachLines_thrt, 1, -1
+
+			! using RIGHT charastalic lines
+			DO itr_AreaLv2= 1, itr_AreaLv1, 1
+
+				! update the counters
+				counter1 = counter1 + 1
+				counterS = counter1 - counter4 
+				counterB = counterS + 1
+
+				! calculate the Slp of the target Mach line
+				SlpMachLine( counter1 ) = 5.0D-1 * ( SlpCharLine( 2, counterS ) + SlpCharLine( 2, counterB ) )
+
+			ENDDO
+
+			! update the counters
+			counter4 = counter4 + itr_AreaLv1 - 1
+
+			! using LEFT charastalic lines
+			DO itr_AreaLv2= 1, itr_AreaLv1, 1
+
+				! update the counters
+				counter1 = counter1 + 1
+				counterS = counter1 - counter5
+				counterB = counterS + itr_AreaLv1
+
+				! calculate the Slp of the target Mach line
+				SlpMachLine( counter1 ) = 5.0D-1 * ( SlpCharLine( 1, counterS ) + SlpCharLine( 1, counterB ) )
+
+			ENDDO
+
+			! update the counters
+			counter5 = counter5 + itr_AreaLv1 - 2
+
+		ENDDO
+
+	! STEP.08
+	! calculation of the cross points of the Mach lines
+
+		! STEP.08.01
+		! about No.1 cross point
+		CD_Crs( 1:2, 1 ) = (/ CDX_Crs_start, CDY_Crs_start /)
+		! STEP.08.02
+		! about No.2 cross point
+		CD_Crs( 1:2, 2 ) = CalcCrossPoint( & 
+			CDX= (/ 0.0D+0, CDX_Crs_start /), & 
+			CDY= (/ 0.0D+0, CDY_Crs_start /), & 
+			ARG= (/ 0.0D+0, SlpMachLine( 1 ) /) & 
+		)
+
+		! STEP.08.03
+		! from No.3 to No.`N`+1
+		! `N` is the number of Mach line at the outlet of throat
+		DO itr = 3, Num_MachLines_thrt+1, 1
+			CD_Crs( 1:2, itr ) = CalcCrossPoint( &
+				CDX= (/ CD_Crs(1,1), CD_Crs(1,itr-1) /), & 
+				CDY= (/ CD_Crs(2,1), CD_Crs(2,itr-1) /), & 
+				ARG= (/ SlpMachLine( itr-1 ), SlpMachLine( Num_MachLines_thrt-2+itr ) /) &
+			)
+		ENDDO
+
+		! STEP.08.04
+		! about No.`N`+2
+		counter1 = Num_MachLines_thrt + 1
+		counter2 = Num_MachLines_thrt + Num_MachLines_thrt
+
+		CD_Crs( 1:2, Num_MachLines_thrt+2 ) = CalcCrossPoint( &
+			CDX= (/ CD_Crs(1,1), CD_Crs(1,counter1) /), & 
+			CDY= (/ CD_Crs(2,1), CD_Crs(2,counter1) /), & 
+			ARG= (/ SlpMachLine( counter1 ), SlpMachLine( counter2 ) /) &
+		)
+
+		! STEP.08.05
+		! from No.`N`+3 to the last
+		counter0 = Num_MachLines_thrt + 3
+		counter1 = 2
+		counter3 = Num_MachLines_thrt + Num_MachLines_thrt + 1
+
+		DO itr_AreaLv1 = 2, Num_MachLines_thrt, 1
+
+			! on the center line of the nozzle
+			counter0 = counter0 + 1
+			counter1 = counter1 + 1
+			counter2 = counter1 + ( Num_MachLines_thrt - itr_AreaLv1 + 1 )
+			counter4 = counter3 + ( Num_MachLines_thrt - itr_AreaLv1 )
+
+			CD_Crs( 1:2, counter0 ) = CalcCrossPoint( &
+					CDX= (/ CD_Crs( 1, counter1 ), 0.0D+0 /), & 
+					CDY= (/ CD_Crs( 2, counter1 ), 0.0D+0 /), & 
+					ARG= (/ SlpMachLine( counter3 ), 0.0D+0 /) &
+				)
+
+			! Neither on the center line nor on the wall of nozzle
+			DO itr_AreaLv2 = 2, Num_MachLines_thrt-itr_AreaLv1, 1
+
+				counter0 = counter0 + 1
+				counter1 = counter1 + 1
+				counter2 = counter1 + ( Num_MachLines_thrt - itr_AreaLv1 + 1 )
+				counter3 = counter3 + 1
+				counter4 = counter3 + ( Num_MachLines_thrt - itr_AreaLv1 )
+
+				CD_Crs( 1:2, counter0 ) = CalcCrossPoint( &
+						CDX= (/ CD_Crs( 1, counter1 ), CD_Crs( 1, counter2 ) /), & 
+						CDY= (/ CD_Crs( 2, counter1 ), CD_Crs( 2, counter2 ) /), & 
+						ARG= (/ SlpMachLine( counter3 ), SlpMachLine( counter4 ) /) &
+					)
+			ENDDO
+
+			! on the wall of nozzle
+			counter0 = counter0 + 1
+			counter1 = counter1 + 1
+			counter2 = counter1 + ( Num_MachLines_thrt - itr_AreaLv1 + 1 )
+			counter3 = counter3 + 1
+			counter4 = counter3 + ( Num_MachLines_thrt - itr_AreaLv1 )
+			counter3 = counter2
+
+			CD_Crs( 1:2, counter0 ) = CalcCrossPoint( &
+					CDX= (/ CD_Crs( 1, counter1 ), CD_Crs( 1, counter2 ) /), & 
+					CDY= (/ CD_Crs( 2, counter1 ), CD_Crs( 2, counter2 ) /), & 
+					ARG= (/ SlpMachLine( counter3 ), SlpMachLine( counter4 ) /) &
+				)
+
+			! update the conters
+			counter1 = counter1 + 1
+			counter3 = counter4 + 1
+
+		ENDDO
+
+	! STEP.09
+	! calculation of the dividing points of the stream lines
+
+		! STEP.01
+		! initialization
+		CD_Div( 1:2, 1 ) = (/ CDX_Div_end, CDY_Div_end /)
+
+		! STEP.02
+		! on the wall of nozzle
+		counter0 = Num_MachLines_thrt + 1
+		counter1 = Num_MachLines_thrt * 2
+
+		DO itr= Num_MachLines_thrt, 2*Num_MachLines_thrt-1, 1
+
+			CD_Div( 1:2, itr ) = CalcCrossPoint( & 
+				CDX= (/ CD_Div( 1, itr-1 ), CD_Crs( 1, counter0 ) /), & 
+				CDY= (/ CD_Div( 1, itr-1 ), CD_Crs( 2, counter0 ) /), & 
+				ARG= (/ VelcAng_Area( counter0 ), SlpMachLine( counter1 ) /) & 
+			)
+
+			counter0 = counter0 + (Num_DivPnts+1) - itr
+			counter1 = counter1 + 2*(Num_DivPnts-itr)
+
+		ENDDO
 
 
 
-	! STEP.03
-	OPEN( UNIT= UnitNum, DEFAULTFILE= path_fldr_save, FILE= path_file_save, IOSTAT= val_stat, ACTION= 'WRITE', STATUS= 'REPLACE' )
+	! STEP.10
+	! OPEN( UNIT= UnitNum, DEFAULTFILE= path_fldr_save, FILE= path_file_save, IOSTAT= val_stat, ACTION= 'WRITE', STATUS= 'REPLACE' )
 
 
-	! STEP.03
-	CLOSE( UNIT= UnitNum, STATUS= 'KEEP', IOSTAT= val_stat )
+	! STEP.11
+	! CLOSE( UNIT= UnitNum, STATUS= 'KEEP', IOSTAT= val_stat )
+
+	! STEP.12
+	! deallocation
+	DEALLOCATE(        CD_Crs, STAT= val_stat )
+	DEALLOCATE(        CD_Div, STAT= val_stat )
+	DEALLOCATE(   RmnnCnsvVal, STAT= val_stat )
+	DEALLOCATE( SlpCharLine, STAT= val_stat )
+	DEALLOCATE(  VelcAng_Area, STAT= val_stat )
+	DEALLOCATE(  MachNum_Area, STAT= val_stat )
+	DEALLOCATE(   PM_func_Area, STAT= val_stat )
+	DEALLOCATE( SlpMachLine, STAT= val_stat )
+	DEALLOCATE( SlpWallArea, STAT= val_stat )
+
+	! STEP.END
+	PRINT *, "ALL OVER"
 
 
 END PROGRAM MAIN
