@@ -8,12 +8,12 @@ MODULE ProblemSetting
     INTEGER( KIND=I4B ), PARAMETER :: PointsY    = PointsX
     INTEGER( KIND=I4B ), PARAMETER :: Substances = 3
     INTEGER( KIND=I4B ), PARAMETER :: TrgtSubst  = 2
-    INTEGER( KIND=I4B ), PARAMETER :: TimeSteps  = 200
+    INTEGER( KIND=I4B ), PARAMETER :: TimeSteps  = 1000
     INTEGER( KIND=I4B ), PARAMETER :: OutputStep = 1
     REAL(    KIND=DPR ), PARAMETER :: SpaceStep  = 1.0D-2
-    REAL(    KIND=DPR ), PARAMETER :: TimeStep   = 2.0D-2
+    REAL(    KIND=DPR ), PARAMETER :: TimeStep   = 2.0D-3
     
-    REAL( KIND=DPR ), DIMENSION(1:3), PARAMETER :: Velocity = (/ 1.3D+1, 1.0D+0, 1.0D+0 /)
+    REAL( KIND=DPR ), DIMENSION(1:3), PARAMETER :: Velocity = (/ 2.0D+0, 1.0D+0, 1.0D+0 /)
 
     INTEGER( KIND=I4B ), PARAMETER :: UnitNumSave = 10
     
@@ -399,6 +399,7 @@ MODULE Simulation
         ! STEP.01
         ! calculate the laplacian of the concentration
         CALL CalcLaplacian( trgt )
+        CALL CalcLaplacian( laplacian )
         
         ! STEP.02
         ! update the concentration field
@@ -504,7 +505,7 @@ PROGRAM MAIN
     CALL SetInitialCondition( TRGT= concentration, PUT= 1 )
     
     DO itr = 0,TimeSteps,1
-        IF ( MOD( itr, OutputStep ) .EQ. 0 ) THEN
+        IF ( MOD( itr, OutputStep ) .EQ. 0 .AND. itr .GE. 800 ) THEN
             WRITE( UNIT= str_step, FMT= '(I6.6)' ) , itr
             CALL OpenFileSave( UNIT= UnitNumSave, FILE= TRIM(name_file_save) // TRIM(str_step) // extension_save )
             CALL SaveResult( UNIT= UnitNumSave, TRGT= concentration(:,:,:) )
