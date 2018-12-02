@@ -117,7 +117,7 @@ module support_support
   ! http://www.nag-j.co.jp/fortran/tips/tips_WaitEnter.html#_WaitEnter
   subroutine WaitEnter
 
-    print '(A/,A)',           &!
+    print '(A/,A)',          &!
       '[TEMPORARY STOP]',    &!
       'Please press Enter:'
     read *
@@ -125,6 +125,7 @@ module support_support
 
   end subroutine
 
+  ! when it have reached the end of all processes
   subroutine ReachedTheEnd
 
     call PrintOnConsoleStatus
