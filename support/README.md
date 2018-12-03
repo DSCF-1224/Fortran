@@ -1,10 +1,74 @@
-# `Fortran`の処理補助モジュール
-# `Fortran 95`
+# Fortranの処理補助モジュール
+# Fortran 95
+工事中
 
-# `Fortran 2008`
+# Fortran 2008
 ## テスト環境
 gfortran 8.1.0
-## `support_support.f08`
+## 構成
+- [support_io.f08](https://github.com/DSCF-1224/Fortran/tree/master/support#support_iof08)
+	- [subroutine : CheckStatAllocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatallocate)
+	- [subroutine : CheckStatDeallocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatdeallocate)
+- [support_support.f08](https://github.com/DSCF-1224/Fortran/tree/master/support#support_supportf08)
+	- [subroutine : PrintOnConsoleStatementName](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--printonconsolestatementname)
+	- [subroutine : PrintOnConsoleError](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--printonconsolestatement)
+	- [subroutine : PrintOnConsoleErrMsg](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine----printonconsoleerrmsg)
+	- [subroutine : PrintOnConsoleStatus](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine----printonconsolestatus)
+	- [function : JointPath](https://github.com/DSCF-1224/Fortran/tree/master/support#function----jointpath)
+	- [subroutine : StopWithMessage](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine----stopwithmessage)
+	- [subroutine : WaitEnter](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine----waitenter)
+	- [subroutine : ReachedTheEnd](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine----reachedtheend)
+
+## support_io.f08
+### subroutine : `CheckStatAllocate`
+- 引数は `stat` と `errmsg` の2個。後者は省略可能
+- 引数 `stat` には `ALLOCATE` 文の `STAT` の戻り値を渡す
+- 引数 `errmsg` には `ALLOCATE` 文の `ERRMSG` の戻り値を渡す
+- 引数 `stat` に渡された値によって、当該 `subroutine` の処理は変化する
+	- `stat` が*ゼロに等しい*場合、動的配列の割り付けに成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- `stat` が*ゼロに等しくない*場合、動的配列の割り付けに失敗したことと `stat` の値をコンソールに出力し、当該 `subroutine` を `call` した `program` 文の実行を中断する
+	- 引数 `errmsg` が与えられていれば、`stat` の値に続けてコンソールに出力する
+```fortran
+program sample
+
+	implicit none
+
+	character( len=128 ) :: buf_errmsg
+	integer              :: statval
+	real, allocatable    :: target(:)
+
+	allocate( target(1:10), stat= statval, errmsg= buf_errmsg )
+	call CheckStatAllocate( stat= statval, errmsg= buf_errmsg )
+
+end sample
+```
+
+### subroutine : `CheckStatDeallocate`
+- 引数は `stat` と `errmsg` の2個。後者は省略可能
+- 引数 `stat` には `DEALLOCATE` 文の `STAT` の戻り値を渡す
+- 引数 `errmsg` には `DEALLOCATE` 文の `ERRMSG` の戻り値を渡す
+- 引数 `stat` に渡された値によって、当該 `subroutine` の処理は変化する
+	- `stat` が*ゼロに等しい*場合、動的配列の割り付けに成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- `stat` が*ゼロに等しくない*場合、動的配列の割り付けに失敗したことと `stat` の値をコンソールに出力し、当該 `subroutine` を `call` した `program` 文の実行を中断する
+	- 引数 `errmsg` が与えられていれば、`stat` の値に続けてコンソールに出力する
+```fortran
+program sample
+
+	implicit none
+
+	character( len=128 ) :: buf_errmsg
+	integer              :: statval
+	real, allocatable    :: target(:)
+
+	allocate( target(1:10), stat= statval, errmsg= buf_errmsg )
+	call CheckStatAllocate( stat= statval, errmsg= buf_errmsg )
+
+	deallocate( target,       stat= statval, errmsg= buf_errmsg )
+	call CheckStatDeallocate( stat= statval, errmsg= buf_errmsg )
+
+end sample
+```
+## support_support.f08
 
 ### subroutine : `PrintOnConsoleStatementName`
 - `PRINT` 文を用い、引数 `name` に渡したステートメントの呼称に、 `statement` を `name` の後に付加してコンソールに出力する
