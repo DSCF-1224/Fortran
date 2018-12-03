@@ -81,11 +81,11 @@ module support_support
   pure function JointPath( parent, child )
 
     ! arguments for this <function>
-    character( len=* ), intent(in) :: parent
-    character( len=* ), intent(in) :: child
+    character( len=*, kind=1 ), intent(in) :: parent
+    character( len=*, kind=1 ), intent(in) :: child
 
     ! return value of this <function>
-    character( len=len(parent)+len(child) ) :: JointPath
+    character( len=len(parent)+len(child), kind=1 ) :: JointPath
 
     ! local variables for this <function>
     integer(kind=int32) :: len_str_parent
@@ -109,7 +109,11 @@ module support_support
 
   ! <STOP> statement with simple Error message
   subroutine StopWithMessage
-    stop '<STOP> statement was activated !'
+    print '(A)', '[TEMPORARY STOP]'
+    print '(A)', '<STOP> statement will be activated !'
+    print '(A)', 'Please press Enter to end this program.'
+    read *
+    stop
   end subroutine
 
 

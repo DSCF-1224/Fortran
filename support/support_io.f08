@@ -1,7 +1,7 @@
-!----------------------------------------------------------------------!
-! [target]                                                             !
-! check return value of <STAT> or <STATVAL>                            !
-!----------------------------------------------------------------------!
+!----------------------------------------------------------------------------------------------------------------------------------!
+! [target]                                                                                                                         !
+! check return value of <STAT> or <STATVAL>                                                                                        !
+!----------------------------------------------------------------------------------------------------------------------------------!
 module support_io
 
   ! <module>s to import
@@ -26,7 +26,7 @@ module support_io
   ! check <stat> of <allocate> statement
   subroutine CheckStatAllocate( stat, errmsg )
 
-    ! argument for this <subroutine>
+    ! arguments for this <subroutine>
     integer(kind=int32),                 intent(in)           :: stat
     character( len=len_ErrMsg, kind=1 ), intent(in), optional :: errmsg
 
@@ -54,9 +54,9 @@ module support_io
           print '(A/)', trim( errmsg )
         end if
         
-        call WaitEnter
         call StopWithMessage
         ! BAD_END
+
     end select
 
   end subroutine
@@ -65,7 +65,7 @@ module support_io
   ! check <stat> of <allocate> statement
   subroutine CheckStatDeallocate( stat, errmsg )
 
-    ! argument for this <subroutine>
+    ! arguments for this <subroutine>
     integer(kind=int32),                 intent(in)           :: stat
     character( len=len_ErrMsg, kind=1 ), intent(in), optional :: errmsg
 
@@ -93,9 +93,9 @@ module support_io
           print '(A/)', trim( errmsg )
         end if
         
-        call WaitEnter
         call StopWithMessage
         ! BAD_END
+
     end select
 
   end subroutine
@@ -104,7 +104,7 @@ module support_io
   ! check <iostat> of <CLOSE> statement
   subroutine CheckIostatClose( iostat, iomsg )
 
-    ! argument for this <subroutine>
+    ! arguments for this <subroutine>
     integer( kind=int32 ),               intent(in)           :: iostat
     character( len=len_ErrMsg, kind=1 ), intent(in), optional :: iomsg
 
@@ -127,7 +127,6 @@ module support_io
           print '(A)', trim( iomsg )
         end if
 
-        call WaitEnter
         call StopWithMessage
         ! BAD_END
 
@@ -139,7 +138,7 @@ module support_io
   ! check <iostat> of <OPEN> statement
   subroutine CheckIostatOpen( iostat, iomsg )
 
-    ! argument for this <subroutine>
+    ! arguments for this <subroutine>
     integer( kind=int32 ),               intent(in)           :: iostat
     character( len=len_ErrMsg, kind=1 ), intent(in), optional :: iomsg
 
@@ -154,7 +153,7 @@ module support_io
         ! TRUE_END
       case default
 
-        print '(A,1X$)',   'An error was detected.'
+        print '(A,1X)',    'An error was detected.'
         print '(A,1X,I8)', '<IOSTAT> value is', iostat
 
         if( present(iomsg) ) then
@@ -162,7 +161,85 @@ module support_io
           print '(A)', trim( iomsg )
         end if
 
-        call WaitEnter
+        call StopWithMessage
+        ! BAD_END
+
+    end select
+
+  end subroutine
+
+
+  ! check <iostat> of <READ> statement
+  subroutine CheckIostatRead( iostat, iomsg, silent )
+
+    ! arguments for this <subroutine>
+    integer( kind=int32 ),               intent(in)           :: iostat
+    character( len=len_ErrMsg, kind=1 ), intent(in), optional :: iomsg
+    logical,                             intent(in), optional :: silent
+
+    select case( iostat )
+      case( 0_int32 )
+
+        if( present( silent ) .and. .not. silent ) then
+          call PrintOnConsoleStatement( 'READ' )
+          call PrintOnConsoleStatus
+          print '(A/)', 'It have succeeded to read the target.'
+        end if
+        return
+        ! TRUE_END
+
+      case default
+
+        call PrintOnConsoleStatement( 'READ' )
+        call PrintOnConsoleStatus
+        print '(A,1X)',    'An error was detected.'
+        print '(A,1X,I8)', '<IOSTAT> value is', iostat
+
+        if( present(iomsg) ) then
+          call PrintOnConsoleErrMsg
+          print '(A/)', trim( iomsg )
+        end if
+
+        call StopWithMessage
+        ! BAD_END
+
+    end select
+
+  end subroutine
+
+
+  ! check <iostat> of <WRITE> statement
+  subroutine CheckIostatWrite( iostat, iomsg, silent )
+
+    ! arguments for this <subroutine>
+    integer( kind=int32 ),               intent(in)           :: iostat
+    character( len=len_ErrMsg, kind=1 ), intent(in), optional :: iomsg
+    logical,                             intent(in), optional :: silent
+
+    select case( iostat )
+      case( 0_int32 )
+
+        if( present( silent ) .and. .not. silent ) then
+          call PrintOnConsoleStatement( 'WRITE' )
+          call PrintOnConsoleStatus
+          print '(A/)', 'It have succeeded to write the target.'
+        end if
+
+        return
+        ! TRUE_END
+
+      case default
+
+        call PrintOnConsoleStatement( 'WRITE' )
+        call PrintOnConsoleStatus
+        print '(A,1X)',    'An error was detected.'
+        print '(A,1X,I8)', '<IOSTAT> value is', iostat
+
+        if( present(iomsg) ) then
+          call PrintOnConsoleErrMsg
+          print '(A/)', trim( iomsg )
+        end if
+
         call StopWithMessage
         ! BAD_END
 
@@ -171,3 +248,6 @@ module support_io
   end subroutine
 
 end module
+!----------------------------------------------------------------------------------------------------------------------------------!
+! End of this F08 file                                                                                                             !
+!----------------------------------------------------------------------------------------------------------------------------------!
