@@ -102,22 +102,30 @@ module support_io
 
 
   ! check <iostat> of <CLOSE> statement
-  subroutine CheckIostatClose( iostat, iomsg )
+  subroutine CheckIostatClose( iostat, iomsg, silent )
 
     ! arguments for this <subroutine>
     integer( kind=int32 ),               intent(in)           :: iostat
     character( len=len_ErrMsg, kind=1 ), intent(in), optional :: iomsg
+    logical,                             intent(in), optional :: silent
 
-
-    call PrintOnConsoleStatement( 'CLOSE' )
-    call PrintOnConsoleStatus
 
     select case( iostat )
+
       case( 0_int32 )
-        print '(A/)', 'It have succeeded to close the target file.'
-        return
-        ! TRUE_END
+
+        if( present( silent ) .and. .not. silent ) then
+          call PrintOnConsoleStatement( 'CLOSE' )
+          call PrintOnConsoleStatus
+          print '(A/)', 'It have succeeded to close the target file.'
+        end if
+
+        return ! TRUE_END
+
       case default
+
+        call PrintOnConsoleStatement( 'CLOSE' )
+        call PrintOnConsoleStatus
 
         print '(A,1X$)',   'An error was detected.'
         print '(A,1X,I8)', '<IOSTAT> value is', iostat
@@ -136,24 +144,32 @@ module support_io
 
 
   ! check <iostat> of <OPEN> statement
-  subroutine CheckIostatOpen( iostat, iomsg )
+  subroutine CheckIostatOpen( iostat, iomsg, silent )
 
     ! arguments for this <subroutine>
     integer( kind=int32 ),               intent(in)           :: iostat
     character( len=len_ErrMsg, kind=1 ), intent(in), optional :: iomsg
+    logical,                             intent(in), optional :: silent
 
-
-    call PrintOnConsoleStatement( 'OPEN' )
-    call PrintOnConsoleStatus
 
     select case( iostat )
+
       case( 0_int32 )
-        print '(A/)', 'It have succeeded to open the target file.'
-        return
-        ! TRUE_END
+
+        if( present( silent ) .and. .not. silent ) then
+          call PrintOnConsoleStatement( 'OPEN' )
+          call PrintOnConsoleStatus
+          print '(A/)', 'It have succeeded to open the target file.'
+        end if
+
+        return ! TRUE_END
+
       case default
 
-        print '(A,1X)',    'An error was detected.'
+        call PrintOnConsoleStatement( 'OPEN' )
+        call PrintOnConsoleStatus
+
+        print '(A,1X$)',   'An error was detected.'
         print '(A,1X,I8)', '<IOSTAT> value is', iostat
 
         if( present(iomsg) ) then
