@@ -35,23 +35,23 @@ module support_io
 
     select case( stat )
       case(0)
-        print '(A/)', 'It have succeeded to allocate the array.'
+        write( unit=output_unit, fmt='(A)', advance='yes' ) 'It have succeeded to allocate the array.'
         return
         ! TRUE_END
       case default
         select case( stat )
           case(1:)
-            print '(A$)', 'An unrecoverable error'
+            write( unit=output_unit, fmt='(A)', advance='no' ) 'An unrecoverable error'
           case(:-1)
-            print '(A$)', 'An undefined error'
+            write( unit=output_unit, fmt='(A)', advance='no' ) 'An undefined error'
         end select
 
-        print '(A)', 'was detected !'
-        print '(A,I8)', 'stat value is ', stat
+        write( unit=output_unit, fmt='(A)',    advance='yes' ) 'was detected !'
+        write( unit=output_unit, fmt='(A,I8)', advance='yes' ) 'stat value is ', stat
         
         if( present(errmsg) ) then
           call PrintOnConsoleErrMsg
-          print '(A/)', trim( errmsg )
+          write( unit=output_unit, fmt='(A)', advance='yes' ) trim(errmsg)
         end if
         
         call StopWithMessage
@@ -74,23 +74,23 @@ module support_io
 
     select case( stat )
       case(0)
-        print '(A/)', 'it have succeeded to deallocate the array.'
+        write( unit=output_unit, fmt='(A)', advance='yes' ) 'It have succeeded to deallocate the array.'
         return
         ! TRUE_END
       case default
         select case( stat )
           case(1:)
-            print '(A$)', 'An unrecoverable error'
+            write( unit=output_unit, fmt='(A)', advance='no' ) 'An unrecoverable error'
           case(:-1)
-            print '(A$)', 'An undefined error'
+            write( unit=output_unit, fmt='(A)', advance='no' ) 'An undefined error'
         end select
 
-        print '(A)', 'was detected !'
-        print '(A,I8)', 'stat value is ', stat
-        
+        write( unit=output_unit, fmt='(A)',    advance='yes' ) 'was detected !'
+        write( unit=output_unit, fmt='(A,I8)', advance='yes' ) 'stat value is ', stat
+
         if( present(errmsg) ) then
           call PrintOnConsoleErrMsg
-          print '(A/)', trim( errmsg )
+          write( unit=output_unit, fmt='(A)', advance='yes' ) trim(errmsg)
         end if
         
         call StopWithMessage
@@ -127,12 +127,12 @@ module support_io
         call PrintOnConsoleStatement( 'CLOSE' )
         call PrintOnConsoleStatus
 
-        print '(A,1X$)',   'An error was detected.'
-        print '(A,1X,I8)', '<IOSTAT> value is', iostat
+        write( unit=output_unit, fmt='(A,1X)',    advance='no'  ) 'An error was detected.'
+        write( unit=output_unit, fmt='(A,1X,I8)', advance='yes' ) '<IOSTAT> value is', iostat
 
         if( present(iomsg) ) then
           call PrintOnConsoleErrMsg
-          print '(A)', trim( iomsg )
+          write( unit=output_unit, fmt='(A)', advance='yes' ) trim(iomsg)
         end if
 
         call StopWithMessage
@@ -169,12 +169,12 @@ module support_io
         call PrintOnConsoleStatement( 'OPEN' )
         call PrintOnConsoleStatus
 
-        print '(A,1X$)',   'An error was detected.'
-        print '(A,1X,I8)', '<IOSTAT> value is', iostat
+        write( unit=output_unit, fmt='(A,1X)',    advance='no'  ) 'An error was detected.'
+        write( unit=output_unit, fmt='(A,1X,I8)', advance='yes' ) '<IOSTAT> value is', iostat
 
         if( present(iomsg) ) then
           call PrintOnConsoleErrMsg
-          print '(A)', trim( iomsg )
+          write( unit=output_unit, fmt='(A)', advance='yes' ) trim(iomsg)
         end if
 
         call StopWithMessage
