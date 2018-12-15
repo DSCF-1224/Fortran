@@ -44,7 +44,7 @@ module support_support
     ! argument for this <subroutine>
     character( len=* ), intent(in) :: name
 
-    print '(A11/,A)', '[Statement]', name
+    write( unit=output_unit, fmt='(A11,/,A)', advance='yes' ) '[Statement]', name
     return
   
   end subroutine
@@ -85,7 +85,7 @@ module support_support
     character( len=*, kind=1 ), intent(in) :: child
 
     ! return value of this <function>
-    character( len=len(parent)+len(child), kind=1 ) :: JointPath
+    character( len=len(parent)+len(child)+1, kind=1 ) :: JointPath
 
     ! local variables for this <function>
     integer(kind=int32) :: len_str_parent

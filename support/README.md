@@ -5,10 +5,15 @@
 # Fortran 2008
 ## テスト環境
 gfortran 8.1.0
+
 ## 構成
 - [support_io.f08](https://github.com/DSCF-1224/Fortran/tree/master/support#support_iof08)
 	- [subroutine : CheckStatAllocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatallocate)
 	- [subroutine : CheckStatDeallocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatdeallocate)
+	- [subroutine : CheckIostatClose](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatclose)
+	- [subroutine : CheckIostatOpen](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatlopen)
+	- [subroutine : CheckIostatRead](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatread)
+	- [subroutine : CheckIostatWrite](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatwrite)
 - [support_support.f08](https://github.com/DSCF-1224/Fortran/tree/master/support#support_supportf08)
 	- [subroutine : PrintOnConsoleStatementName](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--printonconsolestatementname)
 	- [subroutine : PrintOnConsoleError](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--printonconsolestatement)
@@ -69,6 +74,63 @@ program sample
 
 end sample
 ```
+
+### subroutine : CheckIostatClose ###
+- 引数は `iostat` 、 `iomsg` 及び `silent` の3個。`iomsg` と `silent` は省略可能
+- 引数 `iostat` には `CLOSE` 文の `IOSTAT` の戻り値を渡す
+- 引数 `iomsg` には `CLOSE` 文の `IOMSG` の戻り値を渡す
+- 引数 `silent` には論理値を渡す
+- 引数 `iostat` に渡された値によって、当該 `subroutine` の処理は変化する
+	- `iostat` が*ゼロに等しい*場合、 `CLOSE` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- `iostat` が*ゼロに等しくない*場合、 `CLOSE` 文の実行に失敗したことと `iostat` の値をコンソールに出力し、当該 `subroutine` を `call` した `program` 文の実行を中断する
+	- 引数 `iomsg` が与えられていれば、`iostat` の値に続けてコンソールに出力する
+- 引数 `silent` に渡された値によって、当該 `subroutine` の処理は変化する
+	- 「 `silent` が `.true.` 」かつ「 `CLOSE` 文の実行に成功した」場合、コンソールには何も出力されず、当該 `subroutine` から正常に離脱する
+	- 「 `silent` が `.false.` 」かつ「 `CLOSE` 文の実行に成功した」場合、 `CLOSE` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- 「 `CLOSE` 文の実行に失敗した」場合、 `silent` の状態に依らずその旨がコンソールに出力される
+
+### subroutine : CheckIostatOpen ###
+- 引数は `iostat` 、 `iomsg` 及び `silent` の3個。`iomsg` と `silent` は省略可能
+- 引数 `iostat` には `OPEN` 文の `IOSTAT` の戻り値を渡す
+- 引数 `iomsg` には `OPEN` 文の `IOMSG` の戻り値を渡す
+- 引数 `silent` には論理値を渡す
+- 引数 `iostat` に渡された値によって、当該 `subroutine` の処理は変化する
+	- `iostat` が*ゼロに等しい*場合、 `OPEN` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- `iostat` が*ゼロに等しくない*場合、 `OPEN` 文の実行に失敗したことと `iostat` の値をコンソールに出力し、当該 `subroutine` を `call` した `program` 文の実行を中断する
+	- 引数 `iomsg` が与えられていれば、`iostat` の値に続けてコンソールに出力する
+- 引数 `silent` に渡された値によって、当該 `subroutine` の処理は変化する
+	- 「 `silent` が `.true.` 」かつ「 `OPEN` 文の実行に成功した」場合、コンソールには何も出力されず、当該 `subroutine` から正常に離脱する
+	- 「 `silent` が `.false.` 」かつ「 `OPEN` 文の実行に成功した」場合、 `OPEN` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- 「 `OPEN` 文の実行に失敗した」場合、 `silent` の状態に依らずその旨がコンソールに出力される
+
+### subroutine : CheckIostatRead ###
+- 引数は `iostat` 、 `iomsg` 及び `silent` の3個。`iomsg` と `silent` は省略可能
+- 引数 `iostat` には `READ` 文の `IOSTAT` の戻り値を渡す
+- 引数 `iomsg` には `READ` 文の `IOMSG` の戻り値を渡す
+- 引数 `silent` には論理値を渡す
+- 引数 `iostat` に渡された値によって、当該 `subroutine` の処理は変化する
+	- `iostat` が*ゼロに等しい*場合、 `READ` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- `iostat` が*ゼロに等しくない*場合、 `READ` 文の実行に失敗したことと `iostat` の値をコンソールに出力し、当該 `subroutine` を `call` した `program` 文の実行を中断する
+	- 引数 `iomsg` が与えられていれば、`iostat` の値に続けてコンソールに出力する
+- 引数 `silent` に渡された値によって、当該 `subroutine` の処理は変化する
+	- 「 `silent` が `.true.` 」かつ「 `READ` 文の実行に成功した」場合、コンソールには何も出力されず、当該 `subroutine` から正常に離脱する
+	- 「 `silent` が `.false.` 」かつ「 `READ` 文の実行に成功した」場合、 `READ` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- 「 `READ` 文の実行に失敗した」場合、 `silent` の状態に依らずその旨がコンソールに出力される
+
+### subroutine : CheckIostatWrite ###
+- 引数は `iostat` 、 `iomsg` 及び `silent` の3個。`iomsg` と `silent` は省略可能
+- 引数 `iostat` には `WRITE` 文の `IOSTAT` の戻り値を渡す
+- 引数 `iomsg` には `WRITE` 文の `IOMSG` の戻り値を渡す
+- 引数 `silent` には論理値を渡す
+- 引数 `iostat` に渡された値によって、当該 `subroutine` の処理は変化する
+	- `iostat` が*ゼロに等しい*場合、 `WRITE` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- `iostat` が*ゼロに等しくない*場合、 `WRITE` 文の実行に失敗したことと `iostat` の値をコンソールに出力し、当該 `subroutine` を `call` した `program` 文の実行を中断する
+	- 引数 `iomsg` が与えられていれば、`iostat` の値に続けてコンソールに出力する
+- 引数 `silent` に渡された値によって、当該 `subroutine` の処理は変化する
+	- 「 `silent` が `.true.` 」かつ「 `WRITE` 文の実行に成功した」場合、コンソールには何も出力されず、当該 `subroutine` から正常に離脱する
+	- 「 `silent` が `.false.` 」かつ「 `WRITE` 文の実行に成功した」場合、 `WRITE` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- 「 `WRITE` 文の実行に失敗した」場合、 `silent` の状態に依らずその旨がコンソールに出力される
+
 ## support_support.f08
 
 ### subroutine : `PrintOnConsoleStatementName`

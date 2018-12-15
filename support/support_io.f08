@@ -6,7 +6,7 @@ module support_io
 
   ! <module>s to import
   use,     intrinsic :: iso_fortran_env ! gfortran 8.1.0
-  use, non_intrinsic :: support_support
+  use, non_intrinsic :: support_support ! version 2018.12.15
 
   ! require all variables to be explicitly declared
   implicit none
@@ -137,7 +137,7 @@ module support_io
         if( present( silent ) .and. .not. silent ) then
           call PrintOnConsoleStatement( 'CLOSE' )
           call PrintOnConsoleStatus
-          print '(A/)', 'It have succeeded to close the target file.'
+          write( unit=output_unit, fmt='(A,/)' ) 'It have succeeded to close the target file.'
         end if
 
         return ! TRUE_END
@@ -152,11 +152,10 @@ module support_io
 
         if( present(iomsg) ) then
           call PrintOnConsoleErrMsg
-          write( unit=output_unit, fmt='(A)', advance='yes' ) trim(iomsg)
+          write( unit=output_unit, fmt='(A,/)', advance='yes' ) trim(iomsg)
         end if
 
-        call StopWithMessage
-        ! BAD_END
+        call StopWithMessage  ! BAD_END
 
     end select
 
@@ -179,7 +178,7 @@ module support_io
         if( present( silent ) .and. .not. silent ) then
           call PrintOnConsoleStatement( 'OPEN' )
           call PrintOnConsoleStatus
-          print '(A/)', 'It have succeeded to open the target file.'
+          write( unit=output_unit, fmt='(A,/)') 'It have succeeded to open the target file.'
         end if
 
         return ! TRUE_END
@@ -194,11 +193,10 @@ module support_io
 
         if( present(iomsg) ) then
           call PrintOnConsoleErrMsg
-          write( unit=output_unit, fmt='(A)', advance='yes' ) trim(iomsg)
+          write( unit=output_unit, fmt='(A,/)', advance='yes' ) trim(iomsg)
         end if
 
-        call StopWithMessage
-        ! BAD_END
+        call StopWithMessage  ! BAD_END
 
     end select
 
@@ -219,7 +217,7 @@ module support_io
         if( present( silent ) .and. .not. silent ) then
           call PrintOnConsoleStatement( 'READ' )
           call PrintOnConsoleStatus
-          print '(A/)', 'It have succeeded to read the target.'
+          write( unit=output_unit, fmt='(A,/)') 'It have succeeded to read the target.'
         end if
         return
         ! TRUE_END
@@ -228,16 +226,15 @@ module support_io
 
         call PrintOnConsoleStatement( 'READ' )
         call PrintOnConsoleStatus
-        print '(A,1X)',    'An error was detected.'
-        print '(A,1X,I8)', '<IOSTAT> value is', iostat
+        write( unit=output_unit, fmt='(A,1X)'    ) 'An error was detected.'
+        write( unit=output_unit, fmt='(A,1X,I8)' ) '<IOSTAT> value is', iostat
 
         if( present(iomsg) ) then
           call PrintOnConsoleErrMsg
-          print '(A/)', trim( iomsg )
+          write( unit=output_unit, fmt='(A,/)', advance='yes' ) trim(iomsg)
         end if
 
-        call StopWithMessage
-        ! BAD_END
+        call StopWithMessage  ! BAD_END
 
     end select
 
@@ -258,7 +255,7 @@ module support_io
         if( present( silent ) .and. .not. silent ) then
           call PrintOnConsoleStatement( 'WRITE' )
           call PrintOnConsoleStatus
-          print '(A/)', 'It have succeeded to write the target.'
+          write( unit=output_unit, fmt='(A,/)') 'It have succeeded to write the target.'
         end if
 
         return
@@ -268,16 +265,15 @@ module support_io
 
         call PrintOnConsoleStatement( 'WRITE' )
         call PrintOnConsoleStatus
-        print '(A,1X)',    'An error was detected.'
-        print '(A,1X,I8)', '<IOSTAT> value is', iostat
+        write( unit=output_unit, fmt='(A,1X)'    ) 'An error was detected.'
+        write( unit=output_unit, fmt='(A,1X,I8)' ) '<IOSTAT> value is', iostat
 
         if( present(iomsg) ) then
           call PrintOnConsoleErrMsg
-          print '(A/)', trim( iomsg )
+          write( unit=output_unit, fmt='(A,/)', advance='yes' ) trim(iomsg)
         end if
 
-        call StopWithMessage
-        ! BAD_END
+        call StopWithMessage  ! BAD_END
 
     end select
 
