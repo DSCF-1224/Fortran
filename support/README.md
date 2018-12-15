@@ -21,13 +21,19 @@ gfortran 8.1.0
 
 ## support_io.f08
 ### subroutine : `CheckStatAllocate`
-- 引数は `stat` と `errmsg` の2個。後者は省略可能
+- 引数は `stat` 、 `errmsg` 及び `silent` の3個。`errmsg` と `silent` は省略可能
 - 引数 `stat` には `ALLOCATE` 文の `STAT` の戻り値を渡す
 - 引数 `errmsg` には `ALLOCATE` 文の `ERRMSG` の戻り値を渡す
+- 引数 `silent` には論理値を渡す
 - 引数 `stat` に渡された値によって、当該 `subroutine` の処理は変化する
 	- `stat` が*ゼロに等しい*場合、動的配列の割り付けに成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
 	- `stat` が*ゼロに等しくない*場合、動的配列の割り付けに失敗したことと `stat` の値をコンソールに出力し、当該 `subroutine` を `call` した `program` 文の実行を中断する
 	- 引数 `errmsg` が与えられていれば、`stat` の値に続けてコンソールに出力する
+- 引数 `silent` に渡された値によって、当該 `subroutine` の処理は変化する
+	- 「 `silent` が `.true.` 」かつ「動的配列の割り付けに成功した」場合、コンソールには何も出力されず、当該 `subroutine` から正常に離脱する
+	- 「 `silent` が `.false.` 」かつ「動的配列の割り付けに成功した」場合、動的配列の割り付けに成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
+	- 「動的配列の割り付けに失敗した」場合、 `silent` の状態に依らずその旨がコンソールに出力される
+
 ```fortran
 program sample
 
@@ -44,13 +50,8 @@ end sample
 ```
 
 ### subroutine : `CheckStatDeallocate`
-- 引数は `stat` と `errmsg` の2個。後者は省略可能
-- 引数 `stat` には `DEALLOCATE` 文の `STAT` の戻り値を渡す
-- 引数 `errmsg` には `DEALLOCATE` 文の `ERRMSG` の戻り値を渡す
-- 引数 `stat` に渡された値によって、当該 `subroutine` の処理は変化する
-	- `stat` が*ゼロに等しい*場合、動的配列の割り付けに成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
-	- `stat` が*ゼロに等しくない*場合、動的配列の割り付けに失敗したことと `stat` の値をコンソールに出力し、当該 `subroutine` を `call` した `program` 文の実行を中断する
-	- 引数 `errmsg` が与えられていれば、`stat` の値に続けてコンソールに出力する
+- [subroutine : CheckStatAllocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatallocate) の機能を `DEALLOCATE` 文に置き換えたもの
+- 用法容量は [subroutine : CheckStatAllocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatallocate) に等しい
 ```fortran
 program sample
 

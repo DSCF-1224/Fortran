@@ -24,38 +24,48 @@ module support_io
 
 
   ! check <stat> of <allocate> statement
-  subroutine CheckStatAllocate( stat, errmsg )
+  subroutine CheckStatAllocate( stat, errmsg, silent )
 
     ! arguments for this <subroutine>
     integer(kind=int32),                 intent(in)           :: stat
     character( len=len_ErrMsg, kind=1 ), intent(in), optional :: errmsg
-
-    call PrintOnConsoleStatement( "ALLOCATE" )
-    call PrintOnConsoleStatus
+    logical,                             intent(in), optional :: silent
 
     select case( stat )
-      case(0)
-        write( unit=output_unit, fmt='(A)', advance='yes' ) 'It have succeeded to allocate the array.'
-        return
-        ! TRUE_END
+
+      case( 0_int32 )
+
+        if( present( silent ) .and. .not. silent ) then
+          call PrintOnConsoleStatement( "ALLOCATE" )
+          call PrintOnConsoleStatus
+          write( unit=output_unit, fmt='(A)', advance='yes' ) 'It have succeeded to allocate the array.'
+        end if
+
+        return  ! TRUE_END
+
       case default
+
+        call PrintOnConsoleStatement( "ALLOCATE" )
+        call PrintOnConsoleStatus
+
+        write( unit=output_unit, fmt='(A,1X)', advance='no' ) 'An'
+
         select case( stat )
-          case(1:)
-            write( unit=output_unit, fmt='(A)', advance='no' ) 'An unrecoverable error'
-          case(:-1)
-            write( unit=output_unit, fmt='(A)', advance='no' ) 'An undefined error'
+          case(1_int32:)
+            write( unit=output_unit, fmt='(A,1X)', advance='no' ) 'unrecoverable'
+          case(:-1_int32)
+            write( unit=output_unit, fmt='(A,1X)', advance='no' ) 'undefined'
         end select
 
-        write( unit=output_unit, fmt='(A)',    advance='yes' ) 'was detected !'
-        write( unit=output_unit, fmt='(A,I8)', advance='yes' ) 'stat value is ', stat
+        write( unit=output_unit, fmt='(A)',       advance='yes' ) 'error was detected !'
+        write( unit=output_unit, fmt='(A,1X,I8)', advance='yes' ) 'stat value is', stat
         
         if( present(errmsg) ) then
           call PrintOnConsoleErrMsg
           write( unit=output_unit, fmt='(A)', advance='yes' ) trim(errmsg)
         end if
         
-        call StopWithMessage
-        ! BAD_END
+        call StopWithMessage  ! BAD_END
 
     end select
 
@@ -63,38 +73,48 @@ module support_io
 
 
   ! check <stat> of <allocate> statement
-  subroutine CheckStatDeallocate( stat, errmsg )
+  subroutine CheckStatDeallocate( stat, errmsg, silent )
 
     ! arguments for this <subroutine>
     integer(kind=int32),                 intent(in)           :: stat
     character( len=len_ErrMsg, kind=1 ), intent(in), optional :: errmsg
-
-    call PrintOnConsoleStatement( "DEALLOCATE" )
-    call PrintOnConsoleStatus
+    logical,                             intent(in), optional :: silent
 
     select case( stat )
-      case(0)
-        write( unit=output_unit, fmt='(A)', advance='yes' ) 'It have succeeded to deallocate the array.'
-        return
-        ! TRUE_END
+
+      case( 0_int32 )
+
+        if( present( silent ) .and. .not. silent ) then
+          call PrintOnConsoleStatement( "DEALLOCATE" )
+          call PrintOnConsoleStatus
+          write( unit=output_unit, fmt='(A)', advance='yes' ) 'It have succeeded to deallocate the array.'
+        end if
+
+        return  ! TRUE_END
+
       case default
+
+        call PrintOnConsoleStatement( "DEALLOCATE" )
+        call PrintOnConsoleStatus
+
+        write( unit=output_unit, fmt='(A,1X)', advance='no' ) 'An'
+
         select case( stat )
-          case(1:)
-            write( unit=output_unit, fmt='(A)', advance='no' ) 'An unrecoverable error'
-          case(:-1)
-            write( unit=output_unit, fmt='(A)', advance='no' ) 'An undefined error'
+          case(1_int32:)
+            write( unit=output_unit, fmt='(A,1X)', advance='no' ) 'unrecoverable'
+          case(:-1_int32)
+            write( unit=output_unit, fmt='(A,1X)', advance='no' ) 'undefined'
         end select
 
-        write( unit=output_unit, fmt='(A)',    advance='yes' ) 'was detected !'
-        write( unit=output_unit, fmt='(A,I8)', advance='yes' ) 'stat value is ', stat
-
+        write( unit=output_unit, fmt='(A)',       advance='yes' ) 'error was detected !'
+        write( unit=output_unit, fmt='(A,1X,I8)', advance='yes' ) 'stat value is', stat
+        
         if( present(errmsg) ) then
           call PrintOnConsoleErrMsg
           write( unit=output_unit, fmt='(A)', advance='yes' ) trim(errmsg)
         end if
         
-        call StopWithMessage
-        ! BAD_END
+        call StopWithMessage  ! BAD_END
 
     end select
 
