@@ -23,11 +23,15 @@ module support_io
 
 
   ! constants for this <module>
+  character( len=5, kind=1 ), parameter, private :: name_statement_CLOSE = 'CLOSE'
+  character( len=4, kind=1 ), parameter, private :: name_statement_OPEN  = 'OPEN'
   character( len=4, kind=1 ), parameter, private :: name_statement_READ  = 'READ'
   character( len=5, kind=1 ), parameter, private :: name_statement_WRITE = 'WRITE'
 
   integer( kind=int32 ), parameter, private :: mode_CheckIostatReadWrite_READ  = -1_int32
   integer( kind=int32 ), parameter, private :: mode_CheckIostatReadWrite_WRITE =  1_int32
+  integer( kind=int32 ), parameter, private :: mode_CheckIostatOpenClose_CLOSE = -1_int32
+  integer( kind=int32 ), parameter, private :: mode_CheckIostatOpenClose_OPEN  =  1_int32
 
   ! variables for this <module>
   character( len=len_ErrMsg ), public :: buf_ErrMsg_io
@@ -135,43 +139,95 @@ module support_io
   end subroutine
 
 
+  ! check <iostat> of <close> and <open> statement
+  subroutine CheckIostatOpenClose( iostat, iomsg, silent, mode )
+
+    ! arguments for this <subroutine>
+    integer( kind=int32 ),      intent(in)           :: iostat
+    character( len=*, kind=1 ), intent(in), optional :: iomsg
+    logical,                    intent(in)           :: silent
+    integer( kind=int32 ),      intent(in)           :: mode
+
+    ! local variables for this <subroutine>
+    character( len=5, kind=1 ) :: name_statement_buf
+
+    select case( mode )
+      case( mode_CheckIostatOpenClose_CLOSE ); name_statement_buf = name_statement_CLOSE
+      case( mode_CheckIostatOpenClose_OPEN  ); name_statement_buf = name_statement_OPEN
+    end select
+
+    select case ( iostat )
+
+      case ( 0_int32 )
+
+        if( .not. silent ) then
+
+          call PrintOnConsoleStatement( name_statement_buf )
+          call PrintOnConsoleStatus
+          write( unit= output_unit, fmt= '(A,1X,A,1X,A,/)', advance= 'yes' ) &!
+            'It have succeeded to', &!
+            trim( name_statement_buf ), &!
+            'the target file.'
+
+        end if
+
+      case default
+
+        call PrintOnConsoleStatement( trim( name_statement_buf ) )
+        call PrintOnConsoleStatus
+
+        write( unit=output_unit, fmt='(A,/,A,1X,I0)', advance='yes' ) &!
+          'An error was detected.', &!
+          '<IOSTAT> value is',      &!
+          iostat
+
+        if( present( iomsg ) ) then
+          call PrintOnConsoleErrMsg
+          write( unit= output_unit, fmt='(A,/)', advance= 'yes' ) trim( iomsg )
+        end if
+
+        call StopWithMessage
+
+    end select
+
+  end subroutine
+
+
   ! check <iostat> of <CLOSE> statement
   subroutine CheckIostatClose( iostat, iomsg, silent )
 
     ! arguments for this <subroutine>
-    integer( kind=int32 ),               intent(in)           :: iostat
-    character( len=len_ErrMsg, kind=1 ), intent(in), optional :: iomsg
-    logical,                             intent(in), optional :: silent
+    integer( kind=int32 ),      intent(in)           :: iostat
+    character( len=*, kind=1 ), intent(in), optional :: iomsg
+    logical,                    intent(in), optional :: silent
 
+    ! local variable for this <subroutine>
+    logical :: buf_silent
 
-    select case( iostat )
+    if( .not. present( silent ) ) then
+      buf_silent = .false.
+    else
+      buf_silent = silent
+    end if
 
-      case( 0_int32 )
+    if( present( iomsg ) ) then
 
-        if( present( silent ) .and. .not. silent ) then
-          call PrintOnConsoleStatement( 'CLOSE' )
-          call PrintOnConsoleStatus
-          write( unit=output_unit, fmt='(A,/)' ) 'It have succeeded to close the target file.'
-        end if
+      call CheckIostatOpenClose( &!
+        iostat = iostat,                         &!
+        iomsg  = iomsg,                          &!
+        silent = buf_silent,                     &!
+        mode   = mode_CheckIostatOpenClose_CLOSE &!
+      )
 
-        return ! TRUE_END
+    else
 
-      case default
+      call CheckIostatOpenClose( &!
+        iostat = iostat,                         &!
+        silent = buf_silent,                     &!
+        mode   = mode_CheckIostatOpenClose_CLOSE &!
+      )
 
-        call PrintOnConsoleStatement( 'CLOSE' )
-        call PrintOnConsoleStatus
-
-        write( unit=output_unit, fmt='(A,1X)',    advance='no'  ) 'An error was detected.'
-        write( unit=output_unit, fmt='(A,1X,I8)', advance='yes' ) '<IOSTAT> value is', iostat
-
-        if( present(iomsg) ) then
-          call PrintOnConsoleErrMsg
-          write( unit=output_unit, fmt='(A,/)', advance='yes' ) trim(iomsg)
-        end if
-
-        call StopWithMessage  ! BAD_END
-
-    end select
+    end if
 
   end subroutine
 
@@ -180,39 +236,37 @@ module support_io
   subroutine CheckIostatOpen( iostat, iomsg, silent )
 
     ! arguments for this <subroutine>
-    integer( kind=int32 ),               intent(in)           :: iostat
-    character( len=len_ErrMsg, kind=1 ), intent(in), optional :: iomsg
-    logical,                             intent(in), optional :: silent
+    integer( kind=int32 ),      intent(in)           :: iostat
+    character( len=*, kind=1 ), intent(in), optional :: iomsg
+    logical,                    intent(in), optional :: silent
 
+    ! local variable for this <subroutine>
+    logical :: buf_silent
 
-    select case( iostat )
+    if( .not. present( silent ) ) then
+      buf_silent = .false.
+    else
+      buf_silent = silent
+    end if
 
-      case( 0_int32 )
+    if( present( iomsg ) ) then
 
-        if( present( silent ) .and. .not. silent ) then
-          call PrintOnConsoleStatement( 'OPEN' )
-          call PrintOnConsoleStatus
-          write( unit=output_unit, fmt='(A,/)') 'It have succeeded to open the target file.'
-        end if
+      call CheckIostatOpenClose( &!
+        iostat = iostat,                        &!
+        iomsg  = iomsg,                         &!
+        silent = buf_silent,                    &!
+        mode   = mode_CheckIostatOpenClose_OPEN &!
+      )
 
-        return ! TRUE_END
+    else
 
-      case default
+      call CheckIostatOpenClose( &!
+        iostat = iostat,                        &!
+        silent = buf_silent,                    &!
+        mode   = mode_CheckIostatOpenClose_OPEN &!
+      )
 
-        call PrintOnConsoleStatement( 'OPEN' )
-        call PrintOnConsoleStatus
-
-        write( unit=output_unit, fmt='(A,1X)',    advance='no'  ) 'An error was detected.'
-        write( unit=output_unit, fmt='(A,1X,I8)', advance='yes' ) '<IOSTAT> value is', iostat
-
-        if( present(iomsg) ) then
-          call PrintOnConsoleErrMsg
-          write( unit=output_unit, fmt='(A,/)', advance='yes' ) trim(iomsg)
-        end if
-
-        call StopWithMessage  ! BAD_END
-
-    end select
+    end if
 
   end subroutine
 
@@ -256,7 +310,7 @@ module support_io
       ! BAD_END : when it have failed
       case default
 
-        call PrintOnConsoleStatement( name_statement_trgt )
+        call PrintOnConsoleStatement( trim( name_statement_buf ) )
         call PrintOnConsoleStatus
 
         write( unit= output_unit, fmt= '(A,A,A)', advance= 'yes' ) &!
@@ -294,12 +348,24 @@ module support_io
       buf_silent = silent
     end if
 
-    call CheckIostatReadWrite( &!
-      iostat = iostat,                        &!
-      iomsg  = iomsg,                         &!
-      silent = buf_silent,                    &!
-      mode   = mode_CheckIostatReadWrite_READ &!
-    )
+    if( present( iomsg ) ) then
+
+      call CheckIostatReadWrite( &!
+        iostat = iostat,                        &!
+        iomsg  = iomsg,                         &!
+        silent = buf_silent,                    &!
+        mode   = mode_CheckIostatReadWrite_READ &!
+      )
+
+    else
+
+      call CheckIostatReadWrite( &!
+        iostat = iostat,                        &!
+        silent = buf_silent,                    &!
+        mode   = mode_CheckIostatReadWrite_READ &!
+      )
+
+    end if
 
   end subroutine
 
@@ -321,14 +387,27 @@ module support_io
       buf_silent = silent
     end if
 
-    call CheckIostatReadWrite( &!
-      iostat = iostat,                         &!
-      iomsg  = iomsg,                          &!
-      silent = buf_silent,                     &!
-      mode   = mode_CheckIostatReadWrite_WRITE &!
-    )
+    if( present( iomsg ) ) then
+
+      call CheckIostatReadWrite( &!
+        iostat = iostat,                         &!
+        iomsg  = iomsg,                          &!
+        silent = buf_silent,                     &!
+        mode   = mode_CheckIostatReadWrite_WRITE &!
+      )
+
+    else
+
+      call CheckIostatReadWrite( &!
+        iostat = iostat,                         &!
+        silent = buf_silent,                     &!
+        mode   = mode_CheckIostatReadWrite_WRITE &!
+      )
+
+    end if
 
   end subroutine
+
 
 end module
 !----------------------------------------------------------------------------------------------------------------------------------!

@@ -11,12 +11,13 @@ gfortran 8.1.0
 	- `PUBLIC`
 		- [subroutine : CheckStatAllocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatallocate)
 		- [subroutine : CheckStatDeallocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatdeallocate)
-		- [subroutine : CheckIostatClose](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatclose)
-		- [subroutine : CheckIostatOpen](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatlopen)
-		- [subroutine : CheckIostatRead](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatread)
-		- [subroutine : CheckIostatWrite](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatwrite)
+		- [subroutine : CheckIostatClose](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatclose)
+		- [subroutine : CheckIostatOpen](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatlopen)
+		- [subroutine : CheckIostatRead](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatread)
+		- [subroutine : CheckIostatWrite](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatwrite)
 	- `PRIVATE`
-		- [subroutine : CheckIostatReadWrite](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatreadwrite)
+		- [subroutine : CheckIostatReadWrite](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatreadwrite)
+		- [subroutine : CheckIostatOpenClose](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatopenclose)
 - [support_support.f08](https://github.com/DSCF-1224/Fortran/tree/master/support#support_supportf08)
 	- [subroutine : PrintOnConsoleStatementName](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--printonconsolestatementname)
 	- [subroutine : PrintOnConsoleError](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--printonconsolestatement)
@@ -44,6 +45,8 @@ gfortran 8.1.0
 
 ```fortran
 program sample
+	
+	use, intrinsic :: iso_fortran_env 
 
 	implicit none
 
@@ -54,7 +57,7 @@ program sample
 	allocate( target(1:10), stat= statval, errmsg= buf_errmsg )
 	call CheckStatAllocate( stat= statval, errmsg= buf_errmsg )
 
-end sample
+end program sample
 ```
 
 ### subroutine : `CheckStatDeallocate`
@@ -62,6 +65,8 @@ end sample
 - 用法容量は [subroutine : CheckStatAllocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatallocate) に等しい
 ```fortran
 program sample
+	
+	use, intrinsic :: iso_fortran_env 
 
 	implicit none
 
@@ -75,10 +80,10 @@ program sample
 	deallocate( target,       stat= statval, errmsg= buf_errmsg )
 	call CheckStatDeallocate( stat= statval, errmsg= buf_errmsg )
 
-end sample
+end program sample
 ```
 
-### subroutine : CheckIostatClose ###
+### subroutine : `CheckIostatClose` ###
 - 引数は `iostat` 、 `iomsg` 及び `silent` の3個。`iomsg` と `silent` は省略可能
 - 引数 `iostat` には `CLOSE` 文の `IOSTAT` の戻り値を渡す
 - 引数 `iomsg` には `CLOSE` 文の `IOMSG` の戻り値を渡す
@@ -91,8 +96,28 @@ end sample
 	- 「 `silent` が `.true.` 」かつ「 `CLOSE` 文の実行に成功した」場合、コンソールには何も出力されず、当該 `subroutine` から正常に離脱する
 	- 「 `silent` が `.false.` 」かつ「 `CLOSE` 文の実行に成功した」場合、 `CLOSE` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
 	- 「 `CLOSE` 文の実行に失敗した」場合、 `silent` の状態に依らずその旨がコンソールに出力される
+```fortran
+program sample
+	
+	use, intrinsic :: iso_fortran_env 
 
-### subroutine : CheckIostatOpen ###
+	implicit none
+
+	character( len=128 ) :: buf_iomsg
+	integer              :: statval
+
+	open( unit= ???, file= ???, iostat= statval, iomsg= buf_iomsg )
+	call CheckIostatOpen( iostat= statval, iomsg= buf_iomsg, silent= .true.\.false. )
+
+	! something to do
+
+	close( unit= ???, iostat= statval, iomsg= buf_iomsg )
+	call CheckIostatClose( iostat= statval, iomsg= buf_iomsg, silent= .true.\.false. )
+
+end program sample
+```
+
+### subroutine : `CheckIostatOpen` ###
 - 引数は `iostat` 、 `iomsg` 及び `silent` の3個。`iomsg` と `silent` は省略可能
 - 引数 `iostat` には `OPEN` 文の `IOSTAT` の戻り値を渡す
 - 引数 `iomsg` には `OPEN` 文の `IOMSG` の戻り値を渡す
@@ -106,7 +131,28 @@ end sample
 	- 「 `silent` が `.false.` 」かつ「 `OPEN` 文の実行に成功した」場合、 `OPEN` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
 	- 「 `OPEN` 文の実行に失敗した」場合、 `silent` の状態に依らずその旨がコンソールに出力される
 
-### subroutine : CheckIostatRead ###
+```fortran
+program sample
+	
+	use, intrinsic :: iso_fortran_env 
+
+	implicit none
+
+	character( len=128 ) :: buf_iomsg
+	integer              :: statval
+
+	open( unit= ???, file= ???, iostat= statval, iomsg= buf_iomsg )
+	call CheckIostatOpen( iostat= statval, iomsg= buf_iomsg, silent= .true.\.false. )
+
+	! something to do
+
+	close( unit= ???, iostat= statval, iomsg= buf_iomsg )
+	call CheckIostatClose( iostat= statval, iomsg= buf_iomsg, silent= .true.\.false. )
+
+end program sample
+```
+
+### subroutine : `CheckIostatRead` ###
 - 引数は `iostat` 、 `iomsg` 及び `silent` の3個。`iomsg` と `silent` は省略可能
 - 引数 `iostat` には `READ` 文の `IOSTAT` の戻り値を渡す
 - 引数 `iomsg` には `READ` 文の `IOMSG` の戻り値を渡す
@@ -120,7 +166,7 @@ end sample
 	- 「 `silent` が `.false.` 」かつ「 `READ` 文の実行に成功した」場合、 `READ` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
 	- 「 `READ` 文の実行に失敗した」場合、 `silent` の状態に依らずその旨がコンソールに出力される
 
-### subroutine : CheckIostatWrite ###
+### subroutine : `CheckIostatWrite` ###
 - 引数は `iostat` 、 `iomsg` 及び `silent` の3個。`iomsg` と `silent` は省略可能
 - 引数 `iostat` には `WRITE` 文の `IOSTAT` の戻り値を渡す
 - 引数 `iomsg` には `WRITE` 文の `IOMSG` の戻り値を渡す
@@ -134,7 +180,7 @@ end sample
 	- 「 `silent` が `.false.` 」かつ「 `WRITE` 文の実行に成功した」場合、 `WRITE` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
 	- 「 `WRITE` 文の実行に失敗した」場合、 `silent` の状態に依らずその旨がコンソールに出力される
 
-### subroutine : CheckIostatReadWrite ###
+### subroutine : `CheckIostatReadWrite` ###
 - 当該 `subroutine` は `private` 属性が指定されており，**当該 `module` でしか参照できない．**
 - 当該 `subroutine` は当該 `module` 中の `subroutine CheckIostatRead` と `CheckIostatWrite` の共通部分を取り出したものである
 - 引数は `iostat`、`iomsg`、`silent` 及び `mode` の4個。
