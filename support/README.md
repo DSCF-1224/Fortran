@@ -8,12 +8,15 @@ gfortran 8.1.0
 
 ## 構成
 - [support_io.f08](https://github.com/DSCF-1224/Fortran/tree/master/support#support_iof08)
-	- [subroutine : CheckStatAllocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatallocate)
-	- [subroutine : CheckStatDeallocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatdeallocate)
-	- [subroutine : CheckIostatClose](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatclose)
-	- [subroutine : CheckIostatOpen](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatlopen)
-	- [subroutine : CheckIostatRead](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatread)
-	- [subroutine : CheckIostatWrite](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatwrite)
+	- `PUBLIC`
+		- [subroutine : CheckStatAllocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatallocate)
+		- [subroutine : CheckStatDeallocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatdeallocate)
+		- [subroutine : CheckIostatClose](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatclose)
+		- [subroutine : CheckIostatOpen](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatlopen)
+		- [subroutine : CheckIostatRead](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatread)
+		- [subroutine : CheckIostatWrite](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatwrite)
+	- `PRIVATE`
+		- [subroutine : CheckIostatReadWrite](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatreadwrite)
 - [support_support.f08](https://github.com/DSCF-1224/Fortran/tree/master/support#support_supportf08)
 	- [subroutine : PrintOnConsoleStatementName](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--printonconsolestatementname)
 	- [subroutine : PrintOnConsoleError](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--printonconsolestatement)
@@ -130,6 +133,17 @@ end sample
 	- 「 `silent` が `.true.` 」かつ「 `WRITE` 文の実行に成功した」場合、コンソールには何も出力されず、当該 `subroutine` から正常に離脱する
 	- 「 `silent` が `.false.` 」かつ「 `WRITE` 文の実行に成功した」場合、 `WRITE` 文の実行に成功したことをコンソールに出力し、当該 `subroutine` から正常に離脱する
 	- 「 `WRITE` 文の実行に失敗した」場合、 `silent` の状態に依らずその旨がコンソールに出力される
+
+### subroutine : CheckIostatReadWrite ###
+- 当該 `subroutine` は `private` 属性が指定されており，**当該 `module` でしか参照できない．**
+- 当該 `subroutine` は当該 `module` 中の `subroutine CheckIostatRead` と `CheckIostatWrite` の共通部分を取り出したものである
+- 引数は `iostat`、`iomsg`、`silent` 及び `mode` の4個。
+- 引数 `iostat` には `WRITE` 文の `IOSTAT` の戻り値を渡す
+- 引数 `iomsg` には `WRITE` 文の `IOMSG` の戻り値を渡す
+- 引数 `silent` には論理値を渡す
+- 引数 `mode` には当該 `module` 中の `subroutine CheckIostatRead` と `CheckIostatWrite` のどちらに用いるのかを識別するための 32bit 整数型を渡す
+	- 当該 `module` 中の 32bit 整数型定数 `mode_CheckIostatReadWrite_READ` を渡した場合は、 `CheckIostatRead` に対応する．
+	- 当該 `module` 中の 32bit 整数型定数 `mode_CheckIostatReadWrite_WRITE` を渡した場合は、 `CheckIostatWrite` に対応する．
 
 ## support_support.f08
 

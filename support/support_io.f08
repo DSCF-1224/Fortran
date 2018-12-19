@@ -14,6 +14,20 @@ module support_io
   ! accessibility of <subroutine>s and <function>s in this <module>
   public :: CheckStatAllocate
   public :: CheckStatDeallocate
+  public :: CheckIostatClose
+  public :: CheckIostatOpen
+  public :: CheckIostatRead
+  public :: CheckIostatWrite
+
+  private :: CheckIostatReadWrite
+
+
+  ! constants for this <module>
+  character( len=4, kind=1 ), parameter, private :: name_statement_READ  = 'READ'
+  character( len=5, kind=1 ), parameter, private :: name_statement_WRITE = 'WRITE'
+
+  integer( kind=int32 ), parameter, private :: mode_CheckIostatReadWrite_READ  = -1_int32
+  integer( kind=int32 ), parameter, private :: mode_CheckIostatReadWrite_WRITE =  1_int32
 
   ! variables for this <module>
   character( len=len_ErrMsg ), public :: buf_ErrMsg_io
@@ -203,31 +217,53 @@ module support_io
   end subroutine
 
 
-  ! check <iostat> of <READ> statement
-  subroutine CheckIostatRead( iostat, iomsg, silent )
+
+  ! check <iostat> of <READ> and <WRITE> statement
+  subroutine CheckIostatReadWrite( iostat, iomsg, silent, mode )
 
     ! arguments for this <subroutine>
-    integer( kind=int32 ),               intent(in)           :: iostat
-    character( len=len_ErrMsg, kind=1 ), intent(in), optional :: iomsg
-    logical,                             intent(in), optional :: silent
+    integer( kind=int32 ),      intent(in)           :: iostat
+    character( len=*, kind=1 ), intent(in), optional :: iomsg
+    logical,                    intent(in)           :: silent
+    integer( kind=int32 ),      intent(in)           :: mode
+
+    ! local variables for this <subroutine>
+    character( len=5, kind=1 ) :: name_statement_buf
+
+    select case( mode )
+      case( mode_CheckIostatReadWrite_READ );  name_statement_buf = name_statement_READ
+      case( mode_CheckIostatReadWrite_WRITE ); name_statement_buf = name_statement_WRITE
+    end select
 
     select case( iostat )
+
+      ! TRUE_END : when it have succeeded
       case( 0_int32 )
 
-        if( present( silent ) .and. .not. silent ) then
-          call PrintOnConsoleStatement( 'READ' )
-          call PrintOnConsoleStatus
-          write( unit=output_unit, fmt='(A,/)') 'It have succeeded to read the target.'
-        end if
-        return
-        ! TRUE_END
+        if( .not. silent ) then
 
+          call PrintOnConsoleStatement( trim( name_statement_buf ) )
+          call PrintOnConsoleStatus
+          write( unit= output_unit, fmt= '(A,1X,A,1X,A,/)', advance= 'yes' ) &!
+            'It have succeeded to',     &!
+            trim( name_statement_buf ), &!
+            'the target.'
+
+        end if
+
+        return  ! TRUE_END
+
+      ! BAD_END : when it have failed
       case default
 
-        call PrintOnConsoleStatement( 'READ' )
+        call PrintOnConsoleStatement( name_statement_trgt )
         call PrintOnConsoleStatus
-        write( unit=output_unit, fmt='(A,1X)'    ) 'An error was detected.'
-        write( unit=output_unit, fmt='(A,1X,I8)' ) '<IOSTAT> value is', iostat
+
+        write( unit= output_unit, fmt= '(A,A,A)', advance= 'yes' ) &!
+          'An error was detected in <', trim( name_statement_buf ), '>.'
+
+        write( unit= output_unit, fmt= '(A,1X,I0)', advance= 'yes' ) &!
+          '<IOSTAT> value is', iostat
 
         if( present(iomsg) ) then
           call PrintOnConsoleErrMsg
@@ -235,8 +271,35 @@ module support_io
         end if
 
         call StopWithMessage  ! BAD_END
-
+        
     end select
+
+  end subroutine CheckIostatReadWrite
+
+
+  ! check <iostat> of <READ> statement
+  subroutine CheckIostatRead( iostat, iomsg, silent )
+
+    ! arguments for this <subroutine>
+    integer( kind=int32 ),      intent(in)           :: iostat
+    character( len=*, kind=1 ), intent(in), optional :: iomsg
+    logical,                    intent(in), optional :: silent
+
+    ! local variable for this <subroutine>
+    logical :: buf_silent
+
+    if( .not. present( silent ) ) then
+      buf_silent = .false.
+    else
+      buf_silent = silent
+    end if
+
+    call CheckIostatReadWrite( &!
+      iostat = iostat,                        &!
+      iomsg  = iomsg,                         &!
+      silent = buf_silent,                    &!
+      mode   = mode_CheckIostatReadWrite_READ &!
+    )
 
   end subroutine
 
@@ -245,37 +308,25 @@ module support_io
   subroutine CheckIostatWrite( iostat, iomsg, silent )
 
     ! arguments for this <subroutine>
-    integer( kind=int32 ),               intent(in)           :: iostat
-    character( len=len_ErrMsg, kind=1 ), intent(in), optional :: iomsg
-    logical,                             intent(in), optional :: silent
+    integer( kind=int32 ),      intent(in)           :: iostat
+    character( len=*, kind=1 ), intent(in), optional :: iomsg
+    logical,                    intent(in), optional :: silent
 
-    select case( iostat )
-      case( 0_int32 )
+    ! local variable for this <subroutine>
+    logical :: buf_silent
 
-        if( present( silent ) .and. .not. silent ) then
-          call PrintOnConsoleStatement( 'WRITE' )
-          call PrintOnConsoleStatus
-          write( unit=output_unit, fmt='(A,/)') 'It have succeeded to write the target.'
-        end if
+    if( .not. present( silent ) ) then
+      buf_silent = .false.
+    else
+      buf_silent = silent
+    end if
 
-        return
-        ! TRUE_END
-
-      case default
-
-        call PrintOnConsoleStatement( 'WRITE' )
-        call PrintOnConsoleStatus
-        write( unit=output_unit, fmt='(A,1X)'    ) 'An error was detected.'
-        write( unit=output_unit, fmt='(A,1X,I8)' ) '<IOSTAT> value is', iostat
-
-        if( present(iomsg) ) then
-          call PrintOnConsoleErrMsg
-          write( unit=output_unit, fmt='(A,/)', advance='yes' ) trim(iomsg)
-        end if
-
-        call StopWithMessage  ! BAD_END
-
-    end select
+    call CheckIostatReadWrite( &!
+      iostat = iostat,                         &!
+      iomsg  = iomsg,                          &!
+      silent = buf_silent,                     &!
+      mode   = mode_CheckIostatReadWrite_WRITE &!
+    )
 
   end subroutine
 
