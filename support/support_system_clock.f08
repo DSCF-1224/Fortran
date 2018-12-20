@@ -7,16 +7,22 @@ module support_system_clock
   ! <module>s to import
   use, intrinsic :: iso_fortran_env
 
+
   ! require all variables to be explicitly declared
   implicit none
 
+
   ! accessibility of <subroutine>s, <function>s and <type>s in this <module>
   public :: Type_System_Clock
+  public :: SYSTEM_CLOCK_ElapsedTime
+  public :: SYSTEM_CLOCK_UsingType
+
 
   ! <interface> for this <module>
   interface SYSTEM_CLOCK
     module procedure :: SYSTEM_CLOCK_UsingType
   end interface
+
 
   ! <type>s for this <module>
   type Type_System_Clock
@@ -26,10 +32,8 @@ module support_system_clock
   end type Type_System_Clock
 
 
-
   ! <subroutine>s and <function>s for this <module>
   contains
-
 
 
   ! call <SYSTEM_CLOCK> using a structure which is define here
@@ -45,7 +49,6 @@ module support_system_clock
     return
 
   end subroutine SYSTEM_CLOCK_UsingType
-
 
 
   ! calculate the spend time using <SYSTEM_CLOCK>
