@@ -1,7 +1,7 @@
 ! ------------------------------------------------------------------------------------------------------------------------------- !
 ! [Project Euler] 0003                                                                                                            !
-! https://projecteuler.net/problem=2                                                                                              !
-! http://odz.sakura.ne.jp/projecteuler/index.php?cmd=read&page=Problem%202                                                        !
+! https://projecteuler.net/problem=3                                                                                              !
+! http://odz.sakura.ne.jp/projecteuler/index.php?cmd=read&page=Problem%203                                                        !
 ! ------------------------------------------------------------------------------------------------------------------------------- !
 program main
 
