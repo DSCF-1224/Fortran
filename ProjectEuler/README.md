@@ -13,6 +13,11 @@ gfortran 8.1.0
 			- [`function Problem0001_03`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0001_03)
 	- [main.f08](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#mainf08)
 - [Problem 0002](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#problem-0002)
+	- [Problem0002_01.f08](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#problem0002_01f08)
+		- [`module Problem0002`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#module-problem0002)
+			- [`function Calc_FibonacciNum`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-calc_fibonaccinum)
+			- [`function Problem0002_01`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0002_01)
+			- [`function Problem0002_02`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0002_02)
 
 # Problem 0001 #
 
@@ -47,3 +52,22 @@ gfortran 8.1.0
 - [`function Problem0001_01`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0001_01), [`function Problem0001_02`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0001_02), [`function Problem0001_03`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0001_03) を運用するための `program` 文
 
 # Problem 0002 #
+
+## Problem0002_01.f08 ##
+
+### `module Problem0002` ###
+- 組み込みモジュール [`module iso_fortran_env`](https://gcc.gnu.org/onlinedocs/gfortran/ISO_005fFORTRAN_005fENV.html) を必須とする
+- `Fibonacci_1st` : Fibonacci 数列の第1項（本問題での定義値）を格納する `parameter` 属性の整数型変数
+- `Fibonacci_2nd` : Fibonacci 数列の第2項（本問題での定義値）を格納する `parameter` 属性の整数型変数
+
+#### `function Calc_FibonacciNum` ####
+- 当該 `function` の引数は `term` の1個．Fibonacci 数列の第 `term` 項を求める
+- 当該 `function` には `recursive` 属性を付与することで，Fibonacci 数列の第 `term` 項を再帰的に求めている
+
+#### `function Problem0002_01` ####
+- 当該 `function` の引数は `limit` の1個．Fibonacci 数列の項の値の上限を与える．本問題なら `4*10**6` を与えればよい．
+- [`function Calc_FibonacciNum`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-calc_fibonaccinum) を用いて Fibonacci 数列の各項の値を求め，組み込み関数 [`mod`](https://gcc.gnu.org/onlinedocs/gfortran/MOD.html) を用いて，その値が偶数か否かを判定している
+
+#### `function Problem0002_02` ####
+- 当該 `function` の引数は `limit` の1個．Fibonacci 数列の項の値の上限を与える．本問題なら `4*10**6` を与えればよい．
+- 再帰処理を用いる [`function Calc_FibonacciNum`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-calc_fibonaccinum) では，Fibonacci 数列の各項の値を求めるのに時間を要するため，その演算過程をメモ化している
