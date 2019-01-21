@@ -18,6 +18,15 @@ gfortran 8.1.0
 			- [`function Calc_FibonacciNum`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-calc_fibonaccinum)
 			- [`function Problem0002_01`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0002_01)
 			- [`function Problem0002_02`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0002_02)
+- [Problem 0003](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#problem-0003)
+	- [Problem0003_01.f08](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#problem0003_01f08)
+		- [`module Problem0003`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#module-problem0003)
+			- [`interface Problem0003_01`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#interface-problem0003_01)
+			- [`interface Problem0003_02`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#interface-problem0003_02)
+			- [`function Problem0003_01_INT32`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0003_01_int32)
+			- [`function Problem0003_01_INT64`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0003_01_int64)
+			- [`function Problem0003_02_INT32`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0003_02_int32)
+			- [`function Problem0003_02_INT64`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0003_02_int64)
 
 # Problem 0001 #
 
@@ -71,3 +80,27 @@ gfortran 8.1.0
 #### `function Problem0002_02` ####
 - 当該 `function` の引数は `limit` の1個．Fibonacci 数列の項の値の上限を与える．本問題なら `4*10**6` を与えればよい．
 - 再帰処理を用いる [`function Calc_FibonacciNum`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-calc_fibonaccinum) では，Fibonacci 数列の各項の値を求めるのに時間を要するため，その演算過程をメモ化している
+
+# Problem 0003 #
+
+## Problem0003_01.f08 ##
+
+### `module Problem0003` ###
+
+#### `interface Problem0003_01` ####
+手続の総称名を宣言するために使用．対象外部手続きは以下の2個の `function`
+- [`function Problem0003_01_INT32`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0003_01_int32)
+- [`function Problem0003_01_INT64`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0003_01_int64)
+
+#### `interface Problem0003_02` ####
+手続の総称名を宣言するために使用．対象外部手続きは以下の2個の `function`
+- [`function Problem0003_02_INT32`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0003_02_int32)
+- [`function Problem0003_02_INT64`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0003_02_int64)
+
+#### `function Problem0003_01_INT32` ####
+- 当該 `function` の引数は32bit整数型変数 `target` の1個．素数であるか否かを判定する自然数を `target` に与える．
+- 当該 `function` の戻し値は，自然数 `target` の最大の素因数である
+- 素因数の候補は 32bit整数型変数 `factor` に格納され，`1_INT32` ずつ更新される．
+
+#### `function Problem0003_01_INT64` ####
+- [`function Problem0003_01_INT32`](https://github.com/DSCF-1224/Fortran/tree/master/ProjectEuler#function-problem0003_01_int32) の引数，内部処理ならびに戻し値を64bit整数型変数に変更したもの

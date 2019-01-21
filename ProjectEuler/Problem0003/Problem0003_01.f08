@@ -130,13 +130,14 @@ module Problem0003
 
     ! STEP.01 !
     buffer = target
+    factor = 2_INT32
 
     ! STEP.02 !
-    if( mod( buffer, 2_INT32 ) .eq. 0_INT32 ) then
-      buffer      = buffer / 2_INT32
-      last_factor = 2_INT32
-      do while( mod( buffer, 2_INT32 ) .eq. 0_INT32 )
-        buffer = buffer / 2_INT32
+    if( mod( buffer, factor ) .eq. 0_INT32 ) then
+      buffer      = buffer / factor
+      last_factor = factor
+      do while( mod( buffer, factor ) .eq. 0_INT32 )
+        buffer = buffer / factor
       end do
     else
       last_factor = 1_INT32
@@ -180,13 +181,14 @@ module Problem0003
 
     ! STEP.01 !
     buffer = target
+    factor = 2_INT64
 
     ! STEP.02 !
-    if( mod( buffer, 2_INT64 ) .eq. 0_INT64 ) then
-      buffer      = buffer / 2_INT64
-      last_factor = 2_INT64
-      do while( mod( buffer, 2_INT64 ) .eq. 0_INT64 )
-        buffer = buffer / 2_INT64
+    if( mod( buffer, factor ) .eq. 0_INT64 ) then
+      buffer      = buffer / factor
+      last_factor = factor
+      do while( mod( buffer, factor ) .eq. 0_INT64 )
+        buffer = buffer / factor
       end do
     else
       last_factor = 1_INT64
