@@ -15,6 +15,8 @@ module Problem0006
   public  :: Problem0006_01       ! interface
   private :: Problem0006_01_INT32 ! function
   private :: Problem0006_01_INT64 ! function
+  private :: Problem0006_02_INT32 ! function
+  private :: Problem0006_02_INT64 ! function
 
   ! <interface>s for this <program>
   interface Problem0006_01
@@ -22,6 +24,11 @@ module Problem0006
     module procedure Problem0006_01_INT64
   end interface
   
+  interface Problem0006_02
+    module procedure Problem0006_02_INT32
+    module procedure Problem0006_02_INT64
+  end interface
+
   ! <subroutine>s and <function>s in this <module> is below
   contains
 
@@ -86,6 +93,55 @@ module Problem0006
     return
 
   end function Problem0006_01_INT64
+
+
+  pure function Problem0006_02_INT32( target ) result( diff )
+
+    ! arguments for this <function>
+    integer( kind= INT32 ), intent(in) :: target
+
+    ! return value of this <function>
+    integer( kind= INT32 ) :: diff
+
+    ! variables for this <function>
+    integer( kind= INT32 ) :: sum_squared, squared_sum
+
+    ! STEP.01 !
+    sum_squared = target * ( target + 1_INT32 ) * ( 2_INT32 * target + 1_INT32 ) / 6_INT32
+
+    ! STEP.02 !
+    squared_sum = target * ( target + 1_INT32 ) / 2_INT32
+    squared_sum = squared_sum * squared_sum
+
+    ! STEP.03 !
+    diff = squared_sum - sum_squared
+    return
+
+  end function Problem0006_02_INT32
+
+  pure function Problem0006_02_INT64( target ) result( diff )
+
+    ! arguments for this <function>
+    integer( kind= INT64 ), intent(in) :: target
+
+    ! return value of this <function>
+    integer( kind= INT64 ) :: diff
+
+    ! variables for this <function>
+    integer( kind= INT64 ) :: sum_squared, squared_sum
+
+    ! STEP.01 !
+    sum_squared = target * ( target + 1_INT64 ) * ( 2_INT64 * target + 1_INT64 ) / 6_INT64
+
+    ! STEP.02 !
+    squared_sum = target * ( target + 1_INT64 ) / 2_INT64
+    squared_sum = squared_sum * squared_sum
+
+    ! STEP.03 !
+    diff = squared_sum - sum_squared
+    return
+
+  end function Problem0006_02_INT64
 
 end module Problem0006
 ! ------------------------------------------------------------------------------------------------------------------------------- !

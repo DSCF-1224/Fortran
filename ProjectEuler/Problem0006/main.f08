@@ -17,7 +17,7 @@ program main
 
   do itr = 1, 7, 1
     target = 10_INT64 ** itr
-    write( unit=output_unit, fmt='(I3,I10,I30)', advance='yes' ) itr, target, Problem0006_01( target )
+    write( unit=output_unit, fmt='(I3,I10,I30)', advance='yes' ) itr, target, Problem0006_02( target )
   end do
   
 end program main
