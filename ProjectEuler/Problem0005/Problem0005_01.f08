@@ -9,6 +9,9 @@ module Problem0005
   use,     intrinsic :: iso_fortran_env
   use, non_intrinsic :: GCD_LCM
 
+  ! require all variables to be explicitly declared
+  implicit none
+
   ! accessibility of <subroutine>s and <function>s in this <module>
   public :: Problem0005_01 ! function
 

@@ -8,6 +8,9 @@ module Problem0004
   ! <module>s to import
   use, intrinsic :: iso_fortran_env
 
+  ! require all variables to be explicitly declared
+  implicit none
+
   ! accessibility of <subroutine>s and <function>s in this <module>
   public  :: Problem0004_01      ! subroutine
   private :: Get_Digits          ! function
