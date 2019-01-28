@@ -19,19 +19,29 @@ module support_io
   public :: CheckIostatRead
   public :: CheckIostatWrite
 
+  private :: CheckStatAllocateDeallocate
+  private :: CheckIostatOpenClose
   private :: CheckIostatReadWrite
 
 
   ! constants for this <module>
-  character( len=5, kind=1 ), parameter, private :: name_statement_CLOSE = 'CLOSE'
-  character( len=4, kind=1 ), parameter, private :: name_statement_OPEN  = 'OPEN'
-  character( len=4, kind=1 ), parameter, private :: name_statement_READ  = 'READ'
-  character( len=5, kind=1 ), parameter, private :: name_statement_WRITE = 'WRITE'
+  character( len=  8, kind= 1 ), parameter, private :: name_statement_ALLOCATE   = 'ALLOCATE'
+  character( len= 10, kind= 1 ), parameter, private :: name_statement_DEALLOCATE = 'DE'//name_statement_ALLOCATE
+  character( len=  5, kind= 1 ), parameter, private :: name_statement_CLOSE      = 'CLOSE'
+  character( len=  4, kind= 1 ), parameter, private :: name_statement_OPEN       = 'OPEN'
+  character( len=  4, kind= 1 ), parameter, private :: name_statement_READ       = 'READ'
+  character( len=  5, kind= 1 ), parameter, private :: name_statement_WRITE      = 'WRITE'
+  character( len= 19, kind= 1 ), parameter, private :: str_ItHasSucceededTo      = 'It has succeeded to'
+  character( len= 24, kind= 1 ), parameter, private :: str_TheValueOfIostatIs    = 'The value of <IOSTAT> is'
 
-  integer( kind=int32 ), parameter, private :: mode_CheckIostatReadWrite_READ  = -1_int32
-  integer( kind=int32 ), parameter, private :: mode_CheckIostatReadWrite_WRITE =  1_int32
-  integer( kind=int32 ), parameter, private :: mode_CheckIostatOpenClose_CLOSE = -1_int32
-  integer( kind=int32 ), parameter, private :: mode_CheckIostatOpenClose_OPEN  =  1_int32
+  integer( kind= int32 ), parameter, private :: mode_CheckIostatAllocateDeallocate_ALLOCATE   = -1_int32
+  integer( kind= int32 ), parameter, private :: mode_CheckIostatAllocateDeallocate_DEALLOCATE =  1_int32
+
+  integer( kind= int32 ), parameter, private :: mode_CheckIostatReadWrite_READ  = -1_int32
+  integer( kind= int32 ), parameter, private :: mode_CheckIostatReadWrite_WRITE =  1_int32
+
+  integer( kind= int32 ), parameter, private :: mode_CheckIostatOpenClose_CLOSE = -1_int32
+  integer( kind= int32 ), parameter, private :: mode_CheckIostatOpenClose_OPEN  =  1_int32
 
   ! variables for this <module>
   character( len=len_ErrMsg ), public :: buf_ErrMsg_io
@@ -41,29 +51,38 @@ module support_io
   contains
 
 
-  ! check <stat> of <allocate> statement
-  subroutine CheckStatAllocate( stat, errmsg, silent )
+  ! check <stat> of <allocate> and <deallocate> statement
+  subroutine CheckStatAllocateDeallocate( stat, errmsg, silent, mode )
 
     ! arguments for this <subroutine>
-    integer(kind=int32),                 intent(in)           :: stat
-    character( len=len_ErrMsg, kind=1 ), intent(in), optional :: errmsg
-    logical,                             intent(in), optional :: silent
+    integer( kind=int32 ),      intent(in)           :: stat
+    character( len=*, kind=1 ), intent(in), optional :: errmsg
+    logical,                    intent(in)           :: silent
+    integer( kind=int32 ),      intent(in)           :: mode
+
+    ! local variables for this <subroutine>
+    character( len=10, kind=1 ) :: name_statement_buf
+
+    select case( mode )
+      case( mode_CheckIostatAllocateDeallocate_ALLOCATE   ); name_statement_buf = name_statement_ALLOCATE
+      case( mode_CheckIostatAllocateDeallocate_DEALLOCATE ); name_statement_buf = name_statement_DEALLOCATE
+    end select
 
     select case( stat )
 
       case( 0_int32 )
 
-        if( present( silent ) .and. .not. silent ) then
-          call PrintOnConsoleStatement( "ALLOCATE" )
+        if( .not. silent ) then
+          call PrintOnConsoleStatement( name_statement_ALLOCATE )
           call PrintOnConsoleStatus
-          write( unit=output_unit, fmt='(A)', advance='yes' ) 'It have succeeded to allocate the array.'
+          write( unit=output_unit, fmt='(A,1X,A,1X,A)', advance='yes' ) str_ItHasSucceededTo, name_statement_buf, 'the array.'
         end if
 
         return  ! TRUE_END
 
       case default
 
-        call PrintOnConsoleStatement( "ALLOCATE" )
+        call PrintOnConsoleStatement( name_statement_ALLOCATE )
         call PrintOnConsoleStatus
 
         write( unit=output_unit, fmt='(A,1X)', advance='no' ) 'An'
@@ -76,7 +95,7 @@ module support_io
         end select
 
         write( unit=output_unit, fmt='(A)',       advance='yes' ) 'error was detected !'
-        write( unit=output_unit, fmt='(A,1X,I8)', advance='yes' ) 'stat value is', stat
+        write( unit=output_unit, fmt='(A,1X,I8)', advance='yes' ) 'The value of <STAT> is', stat
         
         if( present(errmsg) ) then
           call PrintOnConsoleErrMsg
@@ -86,6 +105,45 @@ module support_io
         call StopWithMessage  ! BAD_END
 
     end select
+
+  end subroutine CheckStatAllocateDeallocate
+
+
+  ! check <stat> of <allocate> statement
+  subroutine CheckStatAllocate( stat, errmsg, silent )
+
+    ! arguments for this <subroutine>
+    integer(kind=int32),                 intent(in)           :: stat
+    character( len=len_ErrMsg, kind=1 ), intent(in), optional :: errmsg
+    logical,                             intent(in), optional :: silent
+
+    ! local variable for this <subroutine>
+    logical :: buf_silent
+
+    if( .not. present( silent ) ) then
+      buf_silent = .false.
+    else
+      buf_silent = silent
+    end if
+
+    if( present( errmsg ) ) then
+
+      call CheckStatAllocateDeallocate( &!
+        stat   = stat,                                       &!
+        errmsg = errmsg,                                     &!
+        silent = buf_silent,                                 &!
+        mode   = mode_CheckIostatAllocateDeallocate_ALLOCATE &!
+      )
+
+    else
+
+      call CheckStatAllocateDeallocate( &!
+        stat   = stat,                                       &!
+        silent = buf_silent,                                 &!
+        mode   = mode_CheckIostatAllocateDeallocate_ALLOCATE &!
+      )
+
+    end if
 
   end subroutine
 
@@ -98,43 +156,33 @@ module support_io
     character( len=len_ErrMsg, kind=1 ), intent(in), optional :: errmsg
     logical,                             intent(in), optional :: silent
 
-    select case( stat )
+    ! local variable for this <subroutine>
+    logical :: buf_silent
 
-      case( 0_int32 )
+    if( .not. present( silent ) ) then
+      buf_silent = .false.
+    else
+      buf_silent = silent
+    end if
 
-        if( present( silent ) .and. .not. silent ) then
-          call PrintOnConsoleStatement( "DEALLOCATE" )
-          call PrintOnConsoleStatus
-          write( unit=output_unit, fmt='(A)', advance='yes' ) 'It have succeeded to deallocate the array.'
-        end if
+    if( present( errmsg ) ) then
 
-        return  ! TRUE_END
+      call CheckStatAllocateDeallocate( &!
+        stat   = stat,                                         &!
+        errmsg = errmsg,                                       &!
+        silent = buf_silent,                                   &!
+        mode   = mode_CheckIostatAllocateDeallocate_DEALLOCATE &!
+      )
 
-      case default
+    else
 
-        call PrintOnConsoleStatement( "DEALLOCATE" )
-        call PrintOnConsoleStatus
+      call CheckStatAllocateDeallocate( &!
+        stat   = stat,                                         &!
+        silent = buf_silent,                                   &!
+        mode   = mode_CheckIostatAllocateDeallocate_DEALLOCATE &!
+      )
 
-        write( unit=output_unit, fmt='(A,1X)', advance='no' ) 'An'
-
-        select case( stat )
-          case(1_int32:)
-            write( unit=output_unit, fmt='(A,1X)', advance='no' ) 'unrecoverable'
-          case(:-1_int32)
-            write( unit=output_unit, fmt='(A,1X)', advance='no' ) 'undefined'
-        end select
-
-        write( unit=output_unit, fmt='(A)',       advance='yes' ) 'error was detected !'
-        write( unit=output_unit, fmt='(A,1X,I8)', advance='yes' ) 'stat value is', stat
-        
-        if( present(errmsg) ) then
-          call PrintOnConsoleErrMsg
-          write( unit=output_unit, fmt='(A)', advance='yes' ) trim(errmsg)
-        end if
-        
-        call StopWithMessage  ! BAD_END
-
-    end select
+    end if
 
   end subroutine
 
@@ -165,9 +213,7 @@ module support_io
           call PrintOnConsoleStatement( name_statement_buf )
           call PrintOnConsoleStatus
           write( unit= output_unit, fmt= '(A,1X,A,1X,A,/)', advance= 'yes' ) &!
-            'It have succeeded to', &!
-            trim( name_statement_buf ), &!
-            'the target file.'
+            str_ItHasSucceededTo, trim( name_statement_buf ), 'the target file.'
 
         end if
 
@@ -178,7 +224,7 @@ module support_io
 
         write( unit=output_unit, fmt='(A,/,A,1X,I0)', advance='yes' ) &!
           'An error was detected.', &!
-          '<IOSTAT> value is',      &!
+          str_TheValueOfIostatIs,      &!
           iostat
 
         if( present( iomsg ) ) then
@@ -299,7 +345,7 @@ module support_io
           call PrintOnConsoleStatement( trim( name_statement_buf ) )
           call PrintOnConsoleStatus
           write( unit= output_unit, fmt= '(A,1X,A,1X,A,/)', advance= 'yes' ) &!
-            'It have succeeded to',     &!
+            str_ItHasSucceededTo,     &!
             trim( name_statement_buf ), &!
             'the target.'
 
@@ -317,7 +363,7 @@ module support_io
           'An error was detected in <', trim( name_statement_buf ), '>.'
 
         write( unit= output_unit, fmt= '(A,1X,I0)', advance= 'yes' ) &!
-          '<IOSTAT> value is', iostat
+          str_TheValueOfIostatIs, iostat
 
         if( present(iomsg) ) then
           call PrintOnConsoleErrMsg
