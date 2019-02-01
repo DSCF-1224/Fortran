@@ -5,6 +5,8 @@
 - [`test_20181220_02.f08`](https://github.com/DSCF-1224/Fortran/tree/master/test#test_20181220_02f08)
 - [`test_20190121_01.f08`](https://github.com/DSCF-1224/Fortran/tree/master/test#test_20190121_01f08)
 - [`test_20190121_02.f08`](https://github.com/DSCF-1224/Fortran/tree/master/test#test_20190121_02f08)
+- [`test_20190131_01.f08`](https://github.com/DSCF-1224/Fortran/tree/master/test#test_20190131_01f08)
+- [`test_20190201_01.f08`](https://github.com/DSCF-1224/Fortran/tree/master/test#test_20190201_01f08)
 
 ## `test_20181220_01.f08` ##
 - 「`gnuplot` の `plot` に用いるバイナリデータファイルの生成」が目的
@@ -21,3 +23,13 @@
 - 自作モジュール `Mod_Interpolation_1D` 中の `Calc_Coefficients_CubicSpline_FF` の実行テスト
 - 自作モジュール `Mod_Interpolation_1D` 中の `Calc_Coefficients_CubicSpline_SS` の実行テスト
 - 自作モジュール `Mod_Integration_1D` 中の `Calc_CubicSplineIntegration_ByData` の実行テスト
+
+## `test_20190131_01.f08` ##
+- OpenMP の練習
+- `!$omp parallel ... !$omp end parallel' の利用方法の確認
+
+## `test_20190201_01.f08` ##
+- OpenMP の練習
+- `!$omp parallel ... !$omp end parallel' の利用方法の確認
+- `!$omp sections ... !$omp end sections' の利用方法の確認
+- `!$omp section' の利用方法の確認
