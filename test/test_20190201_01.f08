@@ -63,7 +63,7 @@ module test_20190201_01
 
     ! STEP.01/01
       call execute_command_line(&!
-        'CD /D "'//path_fldr_gnuplot//'" & gnuplot '//trim(path_file_plt)&!
+        'CD /D "'//path_fldr_gnuplot//'" & wgnuplot '//trim(path_file_plt)&!
       )
 
     ! STEP.TRUE_END

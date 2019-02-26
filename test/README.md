@@ -33,3 +33,8 @@
 - `!$omp parallel ... !$omp end parallel' の利用方法の確認
 - `!$omp sections ... !$omp end sections' の利用方法の確認
 - `!$omp section' の利用方法の確認
+- [gnuplot](http://www.gnuplot.info/) を OpenMP の `!$omp parallel ...` と `!$omp sections ...` を介して複数同時に起動し, グラフを描画可能なのかの検証
+	- 外部データの読み込みを伴わない `plot` に成功. 読み込み対象は以下の2個の PLT ファイル
+		- test_20190201_01_01.plt
+		- test_20190201_01_02.plt
+
