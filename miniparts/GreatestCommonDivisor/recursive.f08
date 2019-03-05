@@ -15,9 +15,9 @@ recursive pure function GCD_RCR_INT08 (n1, n2) result (gcd)
 
   ! STEP.01 !
   if (n2 .eq. 0_INT8) then
-  gcd = n1
+    gcd = n1
   else
-  gcd = GCD_RCR_INT08 (n1= n2, n2=mod (n1, n2))
+    gcd = GCD_RCR_INT08 (n1= n2, n2=mod (n1, n2))
   end if
 
   ! STEP.END !
@@ -38,9 +38,9 @@ recursive pure function GCD_RCR_INT16 (n1, n2) result (gcd)
 
   ! STEP.01 !
   if (n2 .eq. 0_INT16) then
-  gcd = n1
+    gcd = n1
   else
-  gcd = GCD_RCR_INT16 (n1= n2, n2=mod (n1, n2))
+    gcd = GCD_RCR_INT16 (n1= n2, n2=mod (n1, n2))
   end if
 
   ! STEP.END !
@@ -61,9 +61,9 @@ recursive pure function GCD_RCR_INT32 (n1, n2) result (gcd)
 
   ! STEP.01 !
   if (n2 .eq. 0_INT32) then
-  gcd = n1
+    gcd = n1
   else
-  gcd = GCD_RCR_INT32 (n1= n2, n2=mod (n1, n2))
+    gcd = GCD_RCR_INT32 (n1= n2, n2=mod (n1, n2))
   end if
 
   ! STEP.END !
@@ -84,9 +84,9 @@ recursive pure function GCD_RCR_INT64 (n1, n2) result (gcd)
 
   ! STEP.01 !
   if (n2 .eq. 0_INT64) then
-  gcd = n1
+    gcd = n1
   else
-  gcd = GCD_RCR_INT64 (n1= n2, n2=mod (n1, n2))
+    gcd = GCD_RCR_INT64 (n1= n2, n2=mod (n1, n2))
   end if
 
   ! STEP.END !

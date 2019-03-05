@@ -14,18 +14,18 @@ pure function GCD_IND_INT08 (n1, n2) result (gcd)
   integer (kind=INT8) :: gcd
 
   ! variables for this <function>
-  integer (kind=INT8), intent (in) :: buf_n1, buf_n2, buf
+  integer (kind=INT8) :: buf_n1, buf_n2, buf
 
 
   ! STEP.01
   ! store the arguments
   buf_n1 = n1
-  buf_n1 = n1
+  buf_n2 = n2
   
   ! STEP.02
   ! calculate greatest common divisor
-  do while (n2 .ne. 0_INT8)
-    buf    = mod(n1, n2)
+  do while (buf_n2 .ne. 0_INT8)
+    buf    = mod (buf_n1, buf_n2)
     buf_n1 = buf_n2
     buf_n2 = buf
   end do
@@ -47,18 +47,18 @@ pure function GCD_IND_INT16 (n1, n2) result (gcd)
   integer (kind=INT16) :: gcd
 
   ! variables for this <function>
-  integer (kind=INT16), intent (in) :: buf_n1, buf_n2, buf
+  integer (kind=INT16) :: buf_n1, buf_n2, buf
 
 
   ! STEP.01
   ! store the arguments
   buf_n1 = n1
-  buf_n1 = n1
+  buf_n2 = n2
   
   ! STEP.02
   ! calculate greatest common divisor
-  do while (n2 .ne. 0_INT16)
-    buf    = mod(n1, n2)
+  do while (buf_n2 .ne. 0_INT16)
+    buf    = mod (buf_n1, buf_n2)
     buf_n1 = buf_n2
     buf_n2 = buf
   end do
@@ -80,18 +80,18 @@ pure function GCD_IND_INT32 (n1, n2) result (gcd)
   integer (kind=INT32) :: gcd
 
   ! variables for this <function>
-  integer (kind=INT32), intent (in) :: buf_n1, buf_n2, buf
+  integer (kind=INT32) :: buf_n1, buf_n2, buf
 
 
   ! STEP.01
   ! store the arguments
   buf_n1 = n1
-  buf_n1 = n1
+  buf_n2 = n2
   
   ! STEP.02
   ! calculate greatest common divisor
-  do while (n2 .ne. 0_INT32)
-    buf    = mod(n1, n2)
+  do while (buf_n2 .ne. 0_INT32)
+    buf    = mod (buf_n1, buf_n2)
     buf_n1 = buf_n2
     buf_n2 = buf
   end do
@@ -113,18 +113,18 @@ pure function GCD_IND_INT64 (n1, n2) result (gcd)
   integer (kind=INT64) :: gcd
 
   ! variables for this <function>
-  integer (kind=INT64), intent (in) :: buf_n1, buf_n2, buf
+  integer (kind=INT64) :: buf_n1, buf_n2, buf
 
 
   ! STEP.01
   ! store the arguments
   buf_n1 = n1
-  buf_n1 = n1
+  buf_n2 = n2
   
   ! STEP.02
   ! calculate greatest common divisor
-  do while (n2 .ne. 0_INT64)
-    buf    = mod(n1, n2)
+  do while (buf_n2 .ne. 0_INT64)
+    buf    = mod (buf_n1, buf_n2)
     buf_n1 = buf_n2
     buf_n2 = buf
   end do
