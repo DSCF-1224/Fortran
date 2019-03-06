@@ -41,7 +41,7 @@ end function GCD_IND_INT08
 pure function GCD_IND_INT16 (n1, n2) result (gcd)
 
   ! argument of this <function>
-  integer (kind=INT16), intent (in) :: n1, n2
+  integer (kind=INT16), intent(in) :: n1, n2
 
   ! return value of this <function>
   integer (kind=INT16) :: gcd
@@ -74,7 +74,7 @@ end function GCD_IND_INT16
 pure function GCD_IND_INT32 (n1, n2) result (gcd)
 
   ! argument of this <function>
-  integer (kind=INT32), intent (in) :: n1, n2
+  integer (kind=INT32), intent(in) :: n1, n2
 
   ! return value of this <function>
   integer (kind=INT32) :: gcd
@@ -107,7 +107,7 @@ end function GCD_IND_INT32
 pure function GCD_IND_INT64 (n1, n2) result (gcd)
 
   ! argument of this <function>
-  integer (kind=INT64), intent (in) :: n1, n2
+  integer (kind=INT64), intent(in) :: n1, n2
 
   ! return value of this <function>
   integer (kind=INT64) :: gcd

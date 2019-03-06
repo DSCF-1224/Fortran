@@ -8,7 +8,7 @@
 pure function LCM_RCR_INT08 (n1, n2) result (lcm)
 
   ! argument of this <function>
-  integer (kind=INT8), intent (in) :: n1, n2
+  integer (kind=INT8), intent(in) :: n1, n2
 
   ! return value of this <function>
   integer (kind=INT8) :: lcm
@@ -24,7 +24,7 @@ end function LCM_RCR_INT08
 pure function LCM_RCR_INT16 (n1, n2) result (lcm)
 
   ! argument of this <function>
-  integer (kind=INT16), intent (in) :: n1, n2
+  integer (kind=INT16), intent(in) :: n1, n2
 
   ! return value of this <function>
   integer (kind=INT16) :: lcm
@@ -40,7 +40,7 @@ end function LCM_RCR_INT16
 pure function LCM_RCR_INT32 (n1, n2) result (lcm)
 
   ! argument of this <function>
-  integer (kind=INT32), intent (in) :: n1, n2
+  integer (kind=INT32), intent(in) :: n1, n2
 
   ! return value of this <function>
   integer (kind=INT32) :: lcm
@@ -56,7 +56,7 @@ end function LCM_RCR_INT32
 pure function LCM_RCR_INT64 (n1, n2) result (lcm)
 
   ! argument of this <function>
-  integer (kind=INT64), intent (in) :: n1, n2
+  integer (kind=INT64), intent(in) :: n1, n2
 
   ! return value of this <function>
   integer (kind=INT64) :: lcm

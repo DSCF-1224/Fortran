@@ -5,9 +5,10 @@
 ### fortran 2008 ###
 
 |F08 ファイル|README|
-|:-|:-|
-|[GCD_LCM.f08](GCD_LCM.f08)|[&#x1F517;README.md](README/GCD_LCM.md)|
-|[number_of_digits.f08]|[&#x1F517;README.md](README/number_of_digits.md)|
+|:-|:-:|
+|[GCD_LCM.f08](GCD_LCM.f08)|[&#x1F517;](README/GCD_LCM.md)|
+|[number_of_digits.f08](number_of_digits.f08)|[&#x1F517;](README/number_of_digits.md)|
+|[IsMultiple.f08](IsMultiple.f08)|[&#x1F517;](README/IsMultiple.md)|
 
 ## 参考文献 ##
 
