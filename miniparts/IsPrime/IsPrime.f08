@@ -23,7 +23,7 @@ pure function IsPrime_INT8 (target) result(stat)
   
   ! STEP.02
   ! if the integer `target` was less than `4`
-  ! <=> if the integer `target` was equal to `2` or `4`
+  ! <=> if the integer `target` was equal to `2` or `3`
   !  => return `.true.`
   else if (target .lt. 4_INT8) then
   
@@ -42,7 +42,7 @@ pure function IsPrime_INT8 (target) result(stat)
   !  => return `.true.`
   else if (target .lt. 9_INT8) then
   
-    stat = .false.; return
+    stat = .true.; return
   
   ! STEP.05
   ! if the integer `target` was the multipe of `3`
@@ -97,7 +97,7 @@ pure function IsPrime_INT16 (target) result(stat)
   
   ! STEP.02
   ! if the integer `target` was less than `4`
-  ! <=> if the integer `target` was equal to `2` or `4`
+  ! <=> if the integer `target` was equal to `2` or `3`
   !  => return `.true.`
   else if (target .lt. 4_INT16) then
   
@@ -116,7 +116,7 @@ pure function IsPrime_INT16 (target) result(stat)
   !  => return `.true.`
   else if (target .lt. 9_INT16) then
   
-    stat = .false.; return
+    stat = .true.; return
   
   ! STEP.05
   ! if the integer `target` was the multipe of `3`
@@ -171,7 +171,7 @@ pure function IsPrime_INT32 (target) result(stat)
   
   ! STEP.02
   ! if the integer `target` was less than `4`
-  ! <=> if the integer `target` was equal to `2` or `4`
+  ! <=> if the integer `target` was equal to `2` or `3`
   !  => return `.true.`
   else if (target .lt. 4_INT32) then
   
@@ -190,7 +190,7 @@ pure function IsPrime_INT32 (target) result(stat)
   !  => return `.true.`
   else if (target .lt. 9_INT32) then
   
-    stat = .false.; return
+    stat = .true.; return
   
   ! STEP.05
   ! if the integer `target` was the multipe of `3`
@@ -245,7 +245,7 @@ pure function IsPrime_INT64 (target) result(stat)
   
   ! STEP.02
   ! if the integer `target` was less than `4`
-  ! <=> if the integer `target` was equal to `2` or `4`
+  ! <=> if the integer `target` was equal to `2` or `3`
   !  => return `.true.`
   else if (target .lt. 4_INT64) then
   
@@ -264,7 +264,7 @@ pure function IsPrime_INT64 (target) result(stat)
   !  => return `.true.`
   else if (target .lt. 9_INT64) then
   
-    stat = .false.; return
+    stat = .true.; return
   
   ! STEP.05
   ! if the integer `target` was the multipe of `3`

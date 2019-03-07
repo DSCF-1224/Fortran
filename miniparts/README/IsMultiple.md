@@ -3,6 +3,8 @@
 ## 目的 ##
 
 * Fortran 2008 による、倍数であるかどうかを判定する `function` の定義。
+* Fortran 2008 による、偶数であるかどうかを判定する `function` の定義。
+* Fortran 2008 による、奇数であるかどうかを判定する `function` の定義。
 
 ## 実装された `function` と `interface` ##
 
@@ -11,8 +13,8 @@
 |name|`public` / `private`|引数の変数型|戻り値の変数型|
 |:-|:-:|:-:|:-:|
 |[`IsMultiple`](#interface-ismultiple)|`public`|`INT8`, `INT16`, `INT32`, `INT64`|`logical`|
-|`IsEven`|`public`|`INT8`, `INT16`, `INT32`, `INT64`|`logical`|
-|`IsOdd`|`public`|`INT8`, `INT16`, `INT32`, `INT64`|`logical`|
+|[`IsEven`](#interface-iseven)|`public`|`INT8`, `INT16`, `INT32`, `INT64`|`logical`|
+|[`IsOdd`](#interface-isodd)|`public`|`INT8`, `INT16`, `INT32`, `INT64`|`logical`|
 
 ### `function` ###
 
@@ -31,6 +33,8 @@
 |[`IsOdd_INT32`](#function-isodd_int32)|`private`|`INT32`|`logical`|
 |[`IsOdd_INT64`](#function-isodd_int64)|`private`|`INT64`|`logical`|
 
+---
+
 ### `interface` `IsMultiple` ###
 
 * 引数は整数型変数 `target` と `ref` の 2 個です。
@@ -42,6 +46,8 @@
   * [`IsMultiple_INT16`](#function-ismultiple_int16)
   * [`IsMultiple_INT32`](#function-ismultiple_int32)
   * [`IsMultiple_INT64`](#function-ismultiple_int64)
+
+---
 
 ### `interface` `IsEven` ###
 
@@ -55,6 +61,8 @@
   * [`IsEven_INT32`](#function-iseven_int32)
   * [`IsEven_INT64`](#function-iseven_int64)
 
+---
+
 ### `interface` `IsOdd` ###
 
 * 引数は整数型変数 `target` の 1 個です。
@@ -66,6 +74,8 @@
   * [`IsOdd_INT16`](#function-isodd_int16)
   * [`IsOdd_INT32`](#function-isodd_int32)
   * [`IsOdd_INT64`](#function-isodd_int64)
+
+---
 
 ### `function` `IsMultiple_INT8` ###
 
@@ -98,6 +108,8 @@
 * 整数 `target` が 同 `ref` の倍数**であれば**、`.true.` を返します。
 * 整数 `target` が 同 `ref` の倍数**でなければ**、`.false.` を返します。
 * 当該 `function` は `interface` [`IsMultiple`](#interface-ismultiple) で用いられています。
+
+---
 
 ### `function` `IsEven_INT8` ###
 
@@ -134,6 +146,8 @@
 * 整数 `target` が 偶数**でなければ**、`.false.` を返します。
 * 当該 `function` は `interface` [`IsMultiple`](#interface-ismultiple) を用いています。
 * 当該 `function` は `interface` [`IsEven`](#interface-iseven) で用いられています。
+
+---
 
 ### `function` `IsOdd_INT8` ###
 

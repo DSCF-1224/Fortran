@@ -14,8 +14,10 @@ module mod_IsPrime
 
   ! accessibility of <subroutine>s and <function>s in this <module>
   public :: IsPrime
+  public :: IsPrime_list
 
-  private :: IsPrime_INT8, IsPrime_INT16, IsPrime_INT32, IsPrime_INT64
+  private :: IsPrime_INT8,      IsPrime_INT16,      IsPrime_INT32,      IsPrime_INT64
+  private :: IsPrime_list_INT8, IsPrime_list_INT16, IsPrime_list_INT32, IsPrime_list_INT64
 
 
   ! <interface>s for this <module>
@@ -26,10 +28,18 @@ module mod_IsPrime
     module procedure IsPrime_INT64
   end interface IsPrime
 
+  interface IsPrime_list
+    module procedure IsPrime_list_INT8
+    module procedure IsPrime_list_INT16
+    module procedure IsPrime_list_INT32
+    module procedure IsPrime_list_INT64
+  end interface IsPrime_list
+
   ! contained <subroutine>s and <function>s are below
   contains
 
   include "IsPrime\IsPrime.f08"
+  include "IsPrime\IsPrime_list.f08"
 
 end module mod_IsPrime
 
