@@ -18,6 +18,7 @@ module mod_IsMultiple
 
   private :: IsMultiple_INT8, IsMultiple_INT16, IsMultiple_INT32, IsMultiple_INT64
   private :: IsEven_INT8,     IsEven_INT16,     IsEven_INT32,     IsEven_INT64
+  private :: IsOdd_INT8,      IsOdd_INT16,      IsOdd_INT32,      IsOdd_INT64
 
 
   ! <interface>s for this <module>
