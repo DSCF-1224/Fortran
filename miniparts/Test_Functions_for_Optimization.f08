@@ -13,19 +13,31 @@ module mod_Test_Functions_for_Optimization
   ! accessibility of <subroutine>s and <function>s in this <module>
   public :: Ackley_Function
   public :: Beale_Function
+  public :: Bukin_Function_v6
   public :: Goldstein_Price_Function
+  public :: Himmelblau_Function
+  public :: Levi_Function_v13
   public :: Rastrigin_Function
   public :: Rosenbrock_Function
+  public :: ThreeHumpCamel_Function
 
+  private :: Ackley_Function_REAL64,          Ackley_Function_REAL128
+  private :: Beale_Function_REAL64,           Beale_Function_REAL128
+  private :: Bukin_Function_v6_REAL64,        Bukin_Function_v6_REAL128
   private :: Goldstein_Price_Function_REAL64, Goldstein_Price_Function_REAL128
+  private :: Himmelblau_Function_REAL64,      Himmelblau_Function_REAL128
   private :: Rastrigin_Function_REAL64,       Rastrigin_Function_REAL128
   private :: Rosenbrock_Function_REAL64,      Rosenbrock_Function_REAL128
+  private :: Levi_Function_v13_REAL64,        Levi_Function_v13_REAL128
+  private :: ThreeHumpCamel_Function_REAL64,  ThreeHumpCamel_Function_REAL128
 
   ! constants for this <module>
-  real(kind=REAL64),  parameter, private :: CircCnst_REAL64        = acos(-1.0e+00_REAL64 )
-  real(kind=REAL128), parameter, private :: CircCnst_REAL128       = acos(-1.0e+00_REAL128)
-  real(kind=REAL64),  parameter, private :: CircCnst_REAL64_twice  = 2.0e+00_REAL64  * CircCnst_REAL64
-  real(kind=REAL128), parameter, private :: CircCnst_REAL128_twice = 2.0e+00_REAL128 * CircCnst_REAL128
+  real(kind=REAL64),  parameter, private :: CircCnst_REAL64         = acos(-1.0e+00_REAL64 )
+  real(kind=REAL128), parameter, private :: CircCnst_REAL128        = acos(-1.0e+00_REAL128)
+  real(kind=REAL64),  parameter, private :: CircCnst_REAL64_twice   = 2.0e+00_REAL64  * CircCnst_REAL64
+  real(kind=REAL128), parameter, private :: CircCnst_REAL128_twice  = 2.0e+00_REAL128 * CircCnst_REAL128
+  real(kind=REAL64),  parameter, private :: CircCnst_REAL64_triple  = 3.0e+00_REAL64  * CircCnst_REAL64
+  real(kind=REAL128), parameter, private :: CircCnst_REAL128_triple = 3.0e+00_REAL128 * CircCnst_REAL128
 
   real(kind=REAL64),  parameter, private :: NapierCnst_REAL64  = exp(1.0e+00_REAL64 )
   real(kind=REAL128), parameter, private :: NapierCnst_REAL128 = exp(1.0e+00_REAL128)
@@ -42,10 +54,25 @@ module mod_Test_Functions_for_Optimization
     module procedure Beale_Function_REAL128
   end interface Beale_Function
 
+  interface Bukin_Function_v6
+    module procedure Bukin_Function_v6_REAL64
+    module procedure Bukin_Function_v6_REAL128
+  end interface Bukin_Function_v6
+
   interface Goldstein_Price_Function
-    module procedure Goldstein_Price_Function_REAL64
-    module procedure Goldstein_Price_Function_REAL128
+    module procedure Himmelblau_Function_REAL64
+    module procedure Himmelblau_Function_REAL128
   end interface Goldstein_Price_Function
+
+  interface Himmelblau_Function
+    module procedure Himmelblau_Function_REAL64
+    module procedure Himmelblau_Function_REAL128
+  end interface Himmelblau_Function
+
+  interface Levi_Function_v13
+    module procedure Levi_Function_v13_REAL64
+    module procedure Levi_Function_v13_REAL128
+  end interface Levi_Function_v13
 
   interface Rastrigin_Function
     module procedure Rastrigin_Function_REAL64
@@ -56,6 +83,11 @@ module mod_Test_Functions_for_Optimization
     module procedure Rosenbrock_Function_REAL64
     module procedure Rosenbrock_Function_REAL128
   end interface Rosenbrock_Function
+
+  interface ThreeHumpCamel_Function
+    module procedure ThreeHumpCamel_Function_REAL64
+    module procedure ThreeHumpCamel_Function_REAL128
+  end interface ThreeHumpCamel_Function
 
   ! contained <subroutine>s and <function>s are below
   contains
@@ -155,6 +187,36 @@ module mod_Test_Functions_for_Optimization
   end function Beale_Function_REAL128
 
 
+  ! Bukin Function
+  pure function Bukin_Function_v6_REAL64 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL64), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL64) :: retval
+
+    retval = 1.0e+2_REAL64 * sqrt( abs(y - 1.0e-2_REAL64*x*x) ) + 1.0e-2_REAL64 * abs(x + 1.0e+1_REAL64)
+
+    return
+
+  end function Bukin_Function_v6_REAL64
+
+  pure function Bukin_Function_v6_REAL128 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL128), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL128) :: retval
+
+    retval = 1.0e+2_REAL128 * sqrt( abs(y - 1.0e-2_REAL128*x*x) ) + 1.0e-2_REAL128 * abs(x + 1.0e+1_REAL128)
+
+    return
+
+  end function Bukin_Function_v6_REAL128
+
+
   ! Goldstein Price Function
   pure function Goldstein_Price_Function_REAL64 (x, y) result(retval)
 
@@ -204,6 +266,101 @@ module mod_Test_Functions_for_Optimization
 
   end function Goldstein_Price_Function_REAL128
 
+
+  ! Himmelblau Function
+  pure function Himmelblau_Function_REAL64 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL64), intent(in) :: x, y
+
+    ! variables for this <function>
+    real(kind=REAL64) :: factor(1:2)
+
+    ! return value of this <function>
+    real(kind=REAL64) :: retval
+
+    factor(1) = x * x + y - 1.1e+1_REAL64
+    factor(2) = x + y * y - 7.0e+0_REAL64
+
+    retval = factor(1) * factor(1) + factor(2) * factor(2)
+
+    return
+
+  end function Himmelblau_Function_REAL64
+
+  pure function Himmelblau_Function_REAL128 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL128), intent(in) :: x, y
+
+    ! variables for this <function>
+    real(kind=REAL128) :: factor(1:2)
+
+    ! return value of this <function>
+    real(kind=REAL128) :: retval
+
+    factor(1) = x * x + y - 1.1e+1_REAL128
+    factor(2) = x + y * y - 7.0e+0_REAL128
+
+    retval = factor(1) * factor(1) + factor(2) * factor(2)
+
+    return
+
+  end function Himmelblau_Function_REAL128
+
+
+  ! Levi Function version 13
+  pure function Levi_Function_v13_REAL64 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL64), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL64) :: retval
+
+    ! support variables for this <function>
+    real(kind=REAL64) :: factor(1:5)
+
+    factor(1) = sin(CircCnst_REAL64_triple * x)
+    factor(2) = x - 1.0e+00_REAL64
+    factor(3) = sin(CircCnst_REAL64_triple * y)
+    factor(4) = y - 1.0e+00_REAL64
+    factor(5) = sin(CircCnst_REAL64_twice * y)
+
+    retval &!
+    = factor(1) * factor(1) &!
+    + factor(2) * factor(2) * ( 1.0e+00_REAL64 + factor(3) * factor(3) ) &!
+    + factor(4) * factor(4) * ( 1.0e+00_REAL64 + factor(5) * factor(5) )
+
+    return
+
+  end function Levi_Function_v13_REAL64
+
+  pure function Levi_Function_v13_REAL128 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL128), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL128) :: retval
+
+    ! support variables for this <function>
+    real(kind=REAL128) :: factor(1:5)
+
+    factor(1) = sin(CircCnst_REAL128_triple* x)
+    factor(2) = x - 1.0e+00_REAL128
+    factor(3) = sin(CircCnst_REAL128_triple* y)
+    factor(4) = y - 1.0e+00_REAL128
+    factor(5) = sin(CircCnst_REAL128_twice * y)
+
+    retval &!
+    = factor(1) * factor(1) &!
+    + factor(2) * factor(2) * ( 1.0e+00_REAL64 + factor(3) * factor(3) ) &!
+    + factor(4) * factor(4) * ( 1.0e+00_REAL64 + factor(5) * factor(5) )
+
+    return
+
+  end function Levi_Function_v13_REAL128
 
   ! Rastrigin Function
   pure function Rastrigin_Function_REAL64 (n, x) result(retval)
@@ -303,6 +460,46 @@ module mod_Test_Functions_for_Optimization
     end do
 
   end function Rosenbrock_Function_REAL128
+
+
+  ! Three-hump camel Function
+  pure function ThreeHumpCamel_Function_REAL64 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL64), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL64) :: retval
+
+    retval &!
+      = 2.00e+0_REAL64 * x * x                &!
+      - 1.05e+0_REAL64 * x * x * x * x        &!
+      + x * x * x * x * x * x / 6.0e+0_REAL64 &!
+      + x * y                                 &!
+      + y * y 
+
+    return
+
+  end function ThreeHumpCamel_Function_REAL64
+
+  pure function ThreeHumpCamel_Function_REAL128 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL128), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL128) :: retval
+
+    retval &!
+      = 2.00e+0_REAL128 * x * x                &!
+      - 1.05e+0_REAL128 * x * x * x * x        &!
+      + x * x * x * x * x * x / 6.0e+0_REAL128 &!
+      + x * y                                  &!
+      + y * y 
+
+    return
+
+  end function ThreeHumpCamel_Function_REAL128
 
 end module mod_Test_Functions_for_Optimization
 
