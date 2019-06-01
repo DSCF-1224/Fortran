@@ -1,6 +1,8 @@
 ! [reference]
 ! Test functions for optimization - Wikipedia
-! https://en.wikipedia.org/wiki/Test_Funcs_for_optimization
+! https://en.wikipedia.org/wiki/Test_functions_for_optimization
+! https://www.sfu.ca/~ssurjano/optimization.html
+! http://benchmarkfcns.xyz/fcns
 
 module mod_Test_Functions_for_Optimization
 
@@ -12,6 +14,8 @@ module mod_Test_Functions_for_Optimization
 
   ! accessibility of <subroutine>s and <function>s in this <module>
   public :: Ackley_Func
+  public :: Ackley_Func_N02
+  public :: Ackley_Func_N03
   public :: Beale_Func
   public :: Bukin_Func_N06
   public :: CrossInTray_Func
@@ -23,9 +27,12 @@ module mod_Test_Functions_for_Optimization
   public :: Rastrigin_Func
   public :: Rosenbrock_Func
   public :: Schaffer_Func_N02
+  public :: Shubert_Func
   public :: ThreeHumpCamel_Func
 
   private :: Ackley_Func_REAL64,          Ackley_Func_REAL128
+  private :: Ackley_Func_N02_REAL64,      Ackley_Func_N02_REAL128
+  private :: Ackley_Func_N03_REAL64,      Ackley_Func_N03_REAL128
   private :: Beale_Func_REAL64,           Beale_Func_REAL128
   private :: Bukin_Func_N06_REAL64,       Bukin_Func_N06_REAL128
   private :: CrossInTray_Func_REAL64,     CrossInTray_Func_REAL128
@@ -37,6 +44,7 @@ module mod_Test_Functions_for_Optimization
   private :: Levi_Func_N13_REAL64,        Levi_Func_N13_REAL128
   private :: McCormick_Func_REAL64,       McCormick_Func_REAL128
   private :: Schaffer_Func_N02_REAL64,    Schaffer_Func_N02_REAL128
+  private :: Shubert_Func_REAL64,         Shubert_Func_REAL128
   private :: ThreeHumpCamel_Func_REAL64,  ThreeHumpCamel_Func_REAL128
 
   ! constants for this <module>
@@ -58,6 +66,16 @@ module mod_Test_Functions_for_Optimization
     module procedure Ackley_Func_REAL64
     module procedure Ackley_Func_REAL128
   end interface Ackley_Func
+
+  interface Ackley_Func_N02
+    module procedure Ackley_Func_N02_REAL64
+    module procedure Ackley_Func_N02_REAL128
+  end interface Ackley_Func_N02
+
+  interface Ackley_Func_N03
+    module procedure Ackley_Func_N03_REAL64
+    module procedure Ackley_Func_N03_REAL128
+  end interface Ackley_Func_N03
 
   interface Beale_Func
     module procedure Beale_Func_REAL64
@@ -124,6 +142,11 @@ module mod_Test_Functions_for_Optimization
       module procedure Schaffer_Func_N02_REAL128
   end interface Schaffer_Func_N02
 
+  interface Shubert_Func
+    module procedure Shubert_Func_REAL64
+    module procedure Shubert_Func_REAL128
+  end interface Shubert_Func
+
   interface ThreeHumpCamel_Func
     module procedure ThreeHumpCamel_Func_REAL64
     module procedure ThreeHumpCamel_Func_REAL128
@@ -173,6 +196,75 @@ module mod_Test_Functions_for_Optimization
     return
 
   end function Ackley_Func_REAL128
+
+
+  ! Ackley Function N.02
+  ! [range]            abs(x) <= 32 & abs(y) <= 32
+  ! [optimal solution] x = y = 0
+  ! [optimal value]    -200
+
+  pure function Ackley_Func_N02_REAL64 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL64), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL64) :: retval
+
+    retval = - 2.0e+002_REAL64 * exp( - 2.0e-001_REAL64 * sqrt(x*x + y*y) )
+    return
+
+  end function Ackley_Func_N02_REAL64
+
+  pure function Ackley_Func_N02_REAL128 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL128), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL128) :: retval
+
+    retval = - 2.0e+002_REAL128 * exp( - 2.0e-001_REAL128 * sqrt(x*x + y*y) )
+    return
+
+  end function Ackley_Func_N02_REAL128
+
+
+  ! Ackley Function N.02
+  ! [range]            abs(x) <= 32 & abs(y) <= 32
+  ! [optimal solution] (x,y)=(+0.682584587365898, −0.36075325513719)
+  ! [optimal solution] (x,y)=(-0.682584587365898, −0.36075325513719)
+  ! [optimal value]    -195.629028238419
+
+  pure function Ackley_Func_N03_REAL64 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL64), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL64) :: retval
+
+    retval                         &!
+    = Ackley_Func_N02_REAL64(x, y) &!
+    + 5.0e+000_REAL64 * exp( cos(3.0e+000_REAL64 * x) + sin(3.0e+000_REAL64 * y) )
+    return
+
+  end function Ackley_Func_N03_REAL64
+
+  pure function Ackley_Func_N03_REAL128 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL128), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL128) :: retval
+
+    retval                         &!
+    = Ackley_Func_N02_REAL128(x, y) &!
+    + 5.0e+000_REAL128 * exp( cos(3.0e+000_REAL128 * x) + sin(3.0e+000_REAL128 * y) )
+    return
+
+  end function Ackley_Func_N03_REAL128
 
 
   ! Beale Function
@@ -794,6 +886,60 @@ module mod_Test_Functions_for_Optimization
     return
 
   end function Schaffer_Func_N02_REAL128
+
+
+  ! Shubert Function
+  ! [range]            abs(x) <= 10, abs(y) <= 10
+  ! [optimal solution] ???
+  ! [optimal value]    -186.7309
+
+  pure function Shubert_Func_REAL64 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL64), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL64) :: retval
+
+    ! support variables for this <function>
+    integer(INT32) :: itr
+
+    retval = 0.0e+000_REAL64
+
+    do itr = 1_INT32, 5_INT32, 1_INT32
+      retval &!
+      = retval                                 &!
+      + itr * cos( (itr + 1_INT32) * x + itr ) &!
+      * itr * cos( (itr + 1_INT32) * y + itr )
+    end do
+
+    return
+
+  end function Shubert_Func_REAL64
+
+  pure function Shubert_Func_REAL128 (x, y) result(retval)
+
+    ! arguments for this <function>
+    real(kind=REAL128), intent(in) :: x, y
+
+    ! return value of this <function>
+    real(kind=REAL128) :: retval
+
+    ! support variables for this <function>
+    integer(INT32) :: itr
+
+    retval = 0.0e+000_REAL128
+
+    do itr = 1_INT32, 5_INT32, 1_INT32
+      retval &!
+      = retval                                 &!
+      + itr * cos( (itr + 1_INT32) * x + itr ) &!
+      * itr * cos( (itr + 1_INT32) * y + itr )
+    end do
+
+    return
+
+  end function Shubert_Func_REAL128
 
 
   ! Three-hump camel Function

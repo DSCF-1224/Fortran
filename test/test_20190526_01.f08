@@ -34,13 +34,15 @@ program test_20190526_01
   ! constants for this <program>
   integer(INT32), parameter :: UNIT_SAVE = 100_INT32
 
+  character(len=512, kind=1), parameter :: path_folder_save =
+
   type(data_num_interval), parameter :: num_interval &!
-    = data_num_interval(1024_INT32, 1024_INT32)
+    = data_num_interval(512_INT32, 512_INT32)
 
   type(data_domain), parameter :: domain_test &!
     = data_domain(&!
-      data_range(-5.00e+00_REAL64, +5.00e+00_REAL64), &!
-      data_range(-5.00e+00_REAL64, +5.00e+00_REAL64)  &!
+      data_range(-3.20e+001_REAL64, +3.20e+001_REAL64), &!
+      data_range(-3.20e+001_REAL64, +3.20e+001_REAL64)  &!
     )
 
   ! variables for this <program>
@@ -58,12 +60,12 @@ program test_20190526_01
   ! STEP.01
   ! open the file to save the result
   open(&!
-    unit   = UNIT_SAVE,                    &!
-    file   = '???\test_20190526_01.gpbin', &!
-    form   = 'unformatted',                &!
-    access = 'stream',                     &!
-    action = 'write',                      &!
-    status = 'replace'                     &!
+    unit   = UNIT_SAVE,                                           &!
+    file   = trim(path_folder_save) // '\test_20190526_01.gpbin', &!
+    form   = 'unformatted',                                       &!
+    access = 'stream',                                            &!
+    action = 'write',                                             &!
+    status = 'replace'                                            &!
   )
 
   ! STEP.02
@@ -91,7 +93,7 @@ program test_20190526_01
     write(unit=UNIT_SAVE) &!
       cdx(itr_cdx), &!
       cdy(itr_cdy), &!
-      ThreeHumpCamel_Func ( cdx(itr_cdx), cdy(itr_cdy) )
+      Ackley_Func_N03 ( cdx(itr_cdx), cdy(itr_cdy) )
   end do
   end do
 
