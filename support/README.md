@@ -7,28 +7,138 @@
 gfortran 8.1.0
 
 ## 構成
-- [support_io.f08](https://github.com/DSCF-1224/Fortran/tree/master/support#support_iof08)
+- [support_allocation.f08](#support_allocationf08)
 	- `PUBLIC`
-		- [subroutine : CheckStatAllocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatallocate)
-		- [subroutine : CheckStatDeallocate](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkstatdeallocate)
-		- [subroutine : CheckIostatClose](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatclose)
-		- [subroutine : CheckIostatOpen](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatlopen)
-		- [subroutine : CheckIostatRead](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatread)
-		- [subroutine : CheckIostatWrite](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatwrite)
+		- [function : set_mode](function#--initialize_class)
+		- [subroutine : set_mode](#subroutine--set_mode)
+		- [subroutine : set_stat](#subroutine--set_stat)
+		- [subroutine : set_errmsg](#subroutine--set_errmsg)
+		- [function : get_mode](#function--get_mode)
+		- [function : get_stat](#function--get_stat)
+		- [function : get_errmsg](#function--get_errmsg)
+		- [subroutine : evaulate](#subroutine--evaulate)
+- [support_io.f08](#support_iof08)
+	- `PUBLIC`
+		- [subroutine : CheckStatAllocate](#subroutine--checkstatallocate)
+		- [subroutine : CheckStatDeallocate](#subroutine--checkstatdeallocate)
+		- [subroutine : CheckIostatClose](#subroutine--checkiostatclose)
+		- [subroutine : CheckIostatOpen](#subroutine--checkiostatlopen)
+		- [subroutine : CheckIostatRead](#subroutine--checkiostatread)
+		- [subroutine : CheckIostatWrite](#subroutine--checkiostatwrite)
 	- `PRIVATE`
-		- [subroutine : CheckIostatReadWrite](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatreadwrite)
-		- [subroutine : CheckIostatOpenClose](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--checkiostatopenclose)
-- [support_support.f08](https://github.com/DSCF-1224/Fortran/tree/master/support#support_supportf08)
-	- [subroutine : PrintOnConsoleStatementName](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--printonconsolestatementname)
-	- [subroutine : PrintOnConsoleError](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine--printonconsolestatement)
-	- [subroutine : PrintOnConsoleErrMsg](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine----printonconsoleerrmsg)
-	- [subroutine : PrintOnConsoleStatus](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine----printonconsolestatus)
-	- [function : JointPath](https://github.com/DSCF-1224/Fortran/tree/master/support#function----jointpath)
-	- [subroutine : StopWithMessage](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine----stopwithmessage)
-	- [subroutine : WaitEnter](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine----waitenter)
-	- [subroutine : ReachedTheEnd](https://github.com/DSCF-1224/Fortran/tree/master/support#subroutine----reachedtheend)
+		- [subroutine : CheckIostatReadWrite](#subroutine--checkiostatreadwrite)
+		- [subroutine : CheckIostatOpenClose](#subroutine--checkiostatopenclose)
+- [support_support.f08](#support_supportf08)
+	- [subroutine : PrintOnConsoleStatementName](#subroutine--printonconsolestatementname)
+	- [subroutine : PrintOnConsoleError](#subroutine--printonconsolestatement)
+	- [subroutine : PrintOnConsoleErrMsg](#subroutine----printonconsoleerrmsg)
+	- [subroutine : PrintOnConsoleStatus](#subroutine----printonconsolestatus)
+	- [function : JointPath](#function----jointpath)
+	- [subroutine : StopWithMessage](#subroutine----stopwithmessage)
+	- [subroutine : WaitEnter](#subroutine----waitenter)
+	- [subroutine : ReachedTheEnd](#subroutine----reachedtheend)
+
+## support_allocation.f08
+
+### function : `initialize_class`
+
+- 引数は不要です．
+- `class(class_status_allocate)` のインスタンスの初期化を行います．
+
+### subroutine : `set_mode`
+
+- 引数には `.true.` または `.false.` を渡します．
+- 対象のインスタンスを `ALLOCATE` 文に使用する際には，引数に `.true.` を渡します．
+- 対象のインスタンスを `DEALLOCATE` 文に使用する際には，引数に `.false.` を渡します．
+
+### subroutine : `set_stat`
+
+- 対象のインスタンスに，`ALLOCATE/DEALLOCATE` 文の `STAT` の戻し値を渡すために使用します．
+- 引数には `ALLOCATE/DEALLOCATE` 文の `STAT` の戻し値を渡します．
+
+### subroutine : `set_errmsg`
+
+- 対象のインスタンスに，`ALLOCATE/DEALLOCATE` 文の `ERRMSG` の戻し値を渡すために使用します．
+- 引数には `ALLOCATE/DEALLOCATE` 文の `ERRMSG` の戻し値を渡します．
+
+### function : `get_mode`
+
+- 引数には `.true.` または `.false.` を渡します．
+- 対象のインスタンスを `ALLOCATE` 文に使用する際には，引数に `.true.` を渡します．
+- 対象のインスタンスを `DEALLOCATE` 文に使用する際には，引数に `.false.` を渡します．
+
+### function : `get_stat`
+
+- 対象のインスタンスに記録された，`ALLOCATE/DEALLOCATE` 文の `STAT` の戻し値を取得するために使用します．
+- 対象のインスタンスに，`STAT` の戻し値が記録されていない場合，`STOP` 文が呼び出されます．
+
+### function : `get_errmsg`
+
+- 対象のインスタンスに記録された，`ALLOCATE/DEALLOCATE` 文の `STAT` の戻し値を取得するために使用します．
+- 対象のインスタンスに，`STAT` の戻し値が記録されていない場合，`STOP` 文が呼び出されます．
+
+### subroutine : `evaulate`
+
+- `ALLOCATE/DEALLOCATE` 文の `STAT` 及び `ERRMSG` を評価するために使用します．
+- 引数は `unit` と `silence` の2個です．
+- 引数 `unit` には，上述の評価結果を出力する装置番号を渡します．
+- 引数 `silence` には `.true.` または `.false.` を渡します．
+- 引数 `silence` に `.true.` を渡したとき，`ALLOCATE/DEALLOCATE` 文が正常に終了していれば，何も出力されません．
+- 引数 `silence` に `.false.` を渡したとき，`ALLOCATE/DEALLOCATE` 文の終了状態に関わらず，その状況を示すログが出力されます．
+- `ALLOCATE/DEALLOCATE` 文が正常に終了していなければ，引数 `silence` に渡された論理値に関わらず，その結果を示すログが出力されます．
+
+
+### 使用例 : `support_allocation.f08`
+
+```fortran
+program sample
+	
+	use,     intrinsic :: iso_fortran_env
+	use, non_intrinsic :: support_allocation
+
+	implicit none
+
+	! <instance> for this <program>
+	class(class_status_allocate) :: stauts
+
+	! variables for this <program>
+	character(len=512, kind=1) :: buf_errmsg
+	integer  (kind=INT32)      :: buf_stat
+
+	! arrays for this <program>
+	real(kind=REAL64), allocatable, dimension(:) :: x
+
+	! STEP.01
+	! initialize the instance
+	status = initialize_class()
+
+	! STEP.02
+	! allocate the target array
+	allocate(x(1:10), stat=buf_stat, errmsg=buf_errmsg)
+	call status%set_mode  (.true.)
+	call status%set_stat  (buf_stat)
+	call status%set_errmsg(buf_errmsg)
+	call status%evaulate  (unit=OUTPUT_UNIT, silent=silent)
+
+	! STEP.03
+	! deallocate the target array
+	deallocate(x, stat=buf_stat, errmsg=buf_errmsg)
+	call status%set_mode  (.false.)
+	call status%set_stat  (buf_stat)
+	call status%set_errmsg(buf_errmsg)
+	call status%evaulate  (unit=OUTPUT_UNIT, silent=silent)
+
+end program sample
+```
+
+### subroutine : `get_mode`
+
+### subroutine : `get_stat`
+
+### subroutine : `get_errmsg`
 
 ## support_io.f08
+
 ### subroutine : `CheckStatAllocate`
 - 引数は `stat` 、 `errmsg` 及び `silent` の3個。`errmsg` と `silent` は省略可能
 - 引数 `stat` には `ALLOCATE` 文の `STAT` の戻り値を渡す
