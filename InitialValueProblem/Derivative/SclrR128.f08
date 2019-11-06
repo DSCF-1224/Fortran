@@ -4,17 +4,17 @@
 
 interface
 
-  pure function func_eqn_diff ( idvl, sltn )
+  pure function func_eqn_diff ( data_sltn )
 
     ! <module>s to import
-    use, intrinsic :: iso_fortran_env
+    use,     intrinsic :: iso_fortran_env
+    use, non_intrinsic :: module_data_sltn
 
     ! require all variables to be explicitly declared
     implicit none
 
     ! arguments for this <function>
-    real(REAL128), intent(in), optional :: idvl
-    real(REAL128), intent(in), optional :: sltn
+    type(type_sltn_SclrR128), intent(in) :: data_sltn
 
     ! return value of this <function>
     real(REAL128) :: func_eqn_diff
