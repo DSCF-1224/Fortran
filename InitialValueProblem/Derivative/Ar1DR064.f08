@@ -3,7 +3,7 @@
 
 interface
 
-  pure function func_eqn_diff ( dmsn, idvl, sltn )
+  pure function fncOde ( dmsn, idvl, sltn )
 
     ! <module>s to import
     use, intrinsic :: iso_fortran_env
@@ -17,7 +17,7 @@ interface
     real   (REAL64), intent(in), optional :: sltn(1:dmsn)
 
     ! return value of this <function>
-    real(REAL64) :: func_eqn_diff
+    real(REAL64) :: fncOde
 
   end function
 

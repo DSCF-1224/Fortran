@@ -4,7 +4,7 @@
 
 interface
 
-  pure function func_eqn_diff ( data_sltn )
+  function fncOde ( data_sltn )
 
     ! <module>s to import
     use,     intrinsic :: iso_fortran_env
@@ -17,7 +17,7 @@ interface
     type(type_sltn_SclrC064), intent(in) :: data_sltn
 
     ! return value of this <function>
-    complex(REAL64) :: func_eqn_diff
+    complex(REAL64) :: fncOde
 
   end function
 
