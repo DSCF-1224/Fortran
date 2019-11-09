@@ -53,121 +53,110 @@ module moduleIvpSolver
 
   ! --- Euler Method --- !
 
-  function MthdEulerSclrR032 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerSclrR032 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrR032), intent(in) :: dataCrnt
-    real(REAL32),             intent(in) :: val_step_idvl
+    type(type_sltn_SclrR032), intent(in)  :: dataCrnt
+    real(REAL32),             intent(in)  :: val_step_idvl
+    type(type_sltn_SclrR032), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrR032.f08"
 
-    ! return value of this <function>
-    type(type_sltn_SclrR032) :: dataNext
-
     include "Method\Euler\Sclr.f08"
 
     return
 
-  end function MthdEulerSclrR032
+  end subroutine MthdEulerSclrR032
 
-  function MthdEulerSclrR064 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerSclrR064 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrR064), intent(in) :: dataCrnt
-    real(REAL64),             intent(in) :: val_step_idvl
+    type(type_sltn_SclrR064), intent(in)  :: dataCrnt
+    real(REAL64),             intent(in)  :: val_step_idvl
+    type(type_sltn_SclrR064), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrR064.f08"
 
-    ! return value of this <function>
-    type(type_sltn_SclrR064) :: dataNext
-
     include "Method\Euler\Sclr.f08"
 
     return
 
-  end function MthdEulerSclrR064
+  end subroutine MthdEulerSclrR064
 
-  function MthdEulerSclrR128 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerSclrR128 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrR128), intent(in) :: dataCrnt
-    real(REAL128),            intent(in) :: val_step_idvl
+    type(type_sltn_SclrR128), intent(in)  :: dataCrnt
+    real(REAL128),            intent(in)  :: val_step_idvl
+    type(type_sltn_SclrR128), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrR128.f08"
 
-    ! return value of this <function>
-    type(type_sltn_SclrR128) :: dataNext
-
     include "Method\Euler\Sclr.f08"
 
     return
 
-  end function MthdEulerSclrR128
+  end subroutine MthdEulerSclrR128
 
-  function MthdEulerSclrC032 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerSclrC032 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrC032), intent(in) :: dataCrnt
-    real(REAL32),             intent(in) :: val_step_idvl
+    type(type_sltn_SclrC032), intent(in)  :: dataCrnt
+    real(REAL32),             intent(in)  :: val_step_idvl
+    type(type_sltn_SclrC032), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrC032.f08"
 
-    ! return value of this <function>
-    type(type_sltn_SclrC032) :: dataNext
-
     include "Method\Euler\Sclr.f08"
 
     return
 
-  end function MthdEulerSclrC032
+  end subroutine MthdEulerSclrC032
 
-  function MthdEulerSclrC064 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerSclrC064 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrC064), intent(in) :: dataCrnt
-    real(REAL64),             intent(in) :: val_step_idvl
+    type(type_sltn_SclrC064), intent(in)  :: dataCrnt
+    real(REAL64),             intent(in)  :: val_step_idvl
+    type(type_sltn_SclrC064), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrC064.f08"
 
-    ! return value of this <function>
-    type(type_sltn_SclrC064) :: dataNext
-
     include "Method\Euler\Sclr.f08"
 
     return
 
-  end function MthdEulerSclrC064
+  end subroutine MthdEulerSclrC064
 
-  function MthdEulerSclrC128 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerSclrC128 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrC128), intent(in) :: dataCrnt
-    real(REAL128),            intent(in) :: val_step_idvl
+    type(type_sltn_SclrC128), intent(in)  :: dataCrnt
+    real(REAL128),            intent(in)  :: val_step_idvl
+    type(type_sltn_SclrC128), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrC128.f08"
 
-    ! return value of this <function>
-    type(type_sltn_SclrC128) :: dataNext
-
     include "Method\Euler\Sclr.f08"
 
     return
 
-  end function MthdEulerSclrC128
+  end subroutine MthdEulerSclrC128
 
   ! --- Modified Euler Method --- !
 
-  function MthdEulerModSclrR032 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerModSclrR032 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrR032), intent(in) :: dataCrnt
-    real(REAL32),             intent(in) :: val_step_idvl
+    type(type_sltn_SclrR032), intent(in)  :: dataCrnt
+    real(REAL32),             intent(in)  :: val_step_idvl
+    type(type_sltn_SclrR032), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrR032.f08"
@@ -176,22 +165,20 @@ module moduleIvpSolver
     type(type_sltn_SclrR032) :: dataBffr
     real(REAL32)             :: val_step_idvl_half
 
-    ! return value of this <function>
-    type(type_sltn_SclrR032) :: dataNext
-
     val_step_idvl_half = 5.0e-1_REAL32 * val_step_idvl
 
     include "Method\EulerMod\Sclr.f08"
 
     return
 
-  end function MthdEulerModSclrR032
+  end subroutine MthdEulerModSclrR032
 
-  function MthdEulerModSclrR064 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerModSclrR064 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrR064), intent(in) :: dataCrnt
-    real(REAL64),             intent(in) :: val_step_idvl
+    type(type_sltn_SclrR064), intent(in)  :: dataCrnt
+    real(REAL64),             intent(in)  :: val_step_idvl
+    type(type_sltn_SclrR064), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrR064.f08"
@@ -200,22 +187,20 @@ module moduleIvpSolver
     type(type_sltn_SclrR064) :: dataBffr
     real(REAL64)             :: val_step_idvl_half
 
-    ! return value of this <function>
-    type(type_sltn_SclrR064) :: dataNext
-
     val_step_idvl_half = 5.0e-1_REAL64 * val_step_idvl
 
     include "Method\EulerMod\Sclr.f08"
 
     return
 
-  end function MthdEulerModSclrR064
+  end subroutine MthdEulerModSclrR064
 
-  function MthdEulerModSclrR128 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerModSclrR128 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrR128), intent(in) :: dataCrnt
-    real(REAL128),            intent(in) :: val_step_idvl
+    type(type_sltn_SclrR128), intent(in)  :: dataCrnt
+    real(REAL128),            intent(in)  :: val_step_idvl
+    type(type_sltn_SclrR128), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrR128.f08"
@@ -224,22 +209,20 @@ module moduleIvpSolver
     type(type_sltn_SclrR128) :: dataBffr
     real(REAL128)            :: val_step_idvl_half
 
-    ! return value of this <function>
-    type(type_sltn_SclrR128) :: dataNext
-
     val_step_idvl_half = 5.0e-1_REAL128 * val_step_idvl
 
     include "Method\EulerMod\Sclr.f08"
 
     return
 
-  end function MthdEulerModSclrR128
+  end subroutine MthdEulerModSclrR128
 
-  function MthdEulerModSclrC032 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerModSclrC032 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrC032), intent(in) :: dataCrnt
-    real(REAL32),             intent(in) :: val_step_idvl
+    type(type_sltn_SclrC032), intent(in)  :: dataCrnt
+    real(REAL32),             intent(in)  :: val_step_idvl
+    type(type_sltn_SclrC032), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrC032.f08"
@@ -248,22 +231,20 @@ module moduleIvpSolver
     type(type_sltn_SclrC032) :: dataBffr
     real(REAL32)             :: val_step_idvl_half
 
-    ! return value of this <function>
-    type(type_sltn_SclrC032) :: dataNext
-
     val_step_idvl_half = 5.0e-1_REAL32 * val_step_idvl
 
     include "Method\EulerMod\Sclr.f08"
 
     return
 
-  end function MthdEulerModSclrC032
+  end subroutine MthdEulerModSclrC032
 
-  function MthdEulerModSclrC064 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerModSclrC064 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrC064), intent(in) :: dataCrnt
-    real(REAL64),             intent(in) :: val_step_idvl
+    type(type_sltn_SclrC064), intent(in)  :: dataCrnt
+    real(REAL64),             intent(in)  :: val_step_idvl
+    type(type_sltn_SclrC064), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrC064.f08"
@@ -272,22 +253,20 @@ module moduleIvpSolver
     type(type_sltn_SclrC064) :: dataBffr
     real(REAL64)             :: val_step_idvl_half
 
-    ! return value of this <function>
-    type(type_sltn_SclrC064) :: dataNext
-
     val_step_idvl_half = 5.0e-1_REAL64 * val_step_idvl
 
     include "Method\EulerMod\Sclr.f08"
 
     return
 
-  end function MthdEulerModSclrC064
+  end subroutine MthdEulerModSclrC064
 
-  function MthdEulerModSclrC128 ( fncOde, dataCrnt, val_step_idvl ) result ( dataNext )
+  subroutine MthdEulerModSclrC128 ( fncOde, dataCrnt, val_step_idvl, dataNext )
 
     ! arguments for this <function>
-    type(type_sltn_SclrC128), intent(in) :: dataCrnt
-    real(REAL128),            intent(in) :: val_step_idvl
+    type(type_sltn_SclrC128), intent(in)  :: dataCrnt
+    real(REAL128),            intent(in)  :: val_step_idvl
+    type(type_sltn_SclrC128), intent(out) :: dataNext
 
     ! <function> as an argument of this <function>
     include "Derivative\SclrC128.f08"
@@ -296,16 +275,13 @@ module moduleIvpSolver
     type(type_sltn_SclrC128) :: dataBffr
     real(REAL128)            :: val_step_idvl_half
 
-    ! return value of this <function>
-    type(type_sltn_SclrC128) :: dataNext
-
     val_step_idvl_half = 5.0e-1_REAL128 * val_step_idvl
 
     include "Method\EulerMod\Sclr.f08"
 
     return
 
-  end function MthdEulerModSclrC128
+  end subroutine MthdEulerModSclrC128
 
 end module moduleIvpSolver
 
