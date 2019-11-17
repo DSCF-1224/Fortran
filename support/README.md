@@ -7,36 +7,16 @@
 gfortran 8.1.0
 
 ## 構成
-- [support_allocation.f08](#support_allocationf08)
-	- `PUBLIC`
-		- [function : set_mode](function#--initialize_class)
-		- [subroutine : set_mode](#subroutine--set_mode)
-		- [subroutine : set_stat](#subroutine--set_stat)
-		- [subroutine : set_errmsg](#subroutine--set_errmsg)
-		- [function : get_mode](#function--get_mode)
-		- [function : get_stat](#function--get_stat)
-		- [function : get_errmsg](#function--get_errmsg)
-		- [subroutine : evaulate](#subroutine--evaulate)
-- [support_io.f08](#support_iof08)
-	- `PUBLIC`
-		- [subroutine : CheckStatAllocate](#subroutine--checkstatallocate)
-		- [subroutine : CheckStatDeallocate](#subroutine--checkstatdeallocate)
-		- [subroutine : CheckIostatClose](#subroutine--checkiostatclose)
-		- [subroutine : CheckIostatOpen](#subroutine--checkiostatlopen)
-		- [subroutine : CheckIostatRead](#subroutine--checkiostatread)
-		- [subroutine : CheckIostatWrite](#subroutine--checkiostatwrite)
-	- `PRIVATE`
-		- [subroutine : CheckIostatReadWrite](#subroutine--checkiostatreadwrite)
-		- [subroutine : CheckIostatOpenClose](#subroutine--checkiostatopenclose)
-- [support_support.f08](#support_supportf08)
-	- [subroutine : PrintOnConsoleStatementName](#subroutine--printonconsolestatementname)
-	- [subroutine : PrintOnConsoleError](#subroutine--printonconsolestatement)
-	- [subroutine : PrintOnConsoleErrMsg](#subroutine----printonconsoleerrmsg)
-	- [subroutine : PrintOnConsoleStatus](#subroutine----printonconsolestatus)
-	- [function : JointPath](#function----jointpath)
-	- [subroutine : StopWithMessage](#subroutine----stopwithmessage)
-	- [subroutine : WaitEnter](#subroutine----waitenter)
-	- [subroutine : ReachedTheEnd](#subroutine----reachedtheend)
+
+* [Fortranの処理補助モジュール](#fortran%e3%81%ae%e5%87%a6%e7%90%86%e8%a3%9c%e5%8a%a9%e3%83%a2%e3%82%b8%e3%83%a5%e3%83%bc%e3%83%ab)
+* [Fortran 95](#fortran-95)
+* [Fortran 2008](#fortran-2008)
+  * [テスト環境](#%e3%83%86%e3%82%b9%e3%83%88%e7%92%b0%e5%a2%83)
+  * [構成](#%e6%a7%8b%e6%88%90)
+  * [support_allocation.f08](#supportallocationf08)
+  * [support_io.f08](#supportiof08)
+  * [support_support.f08](#supportsupportf08)
+  * [support_system_clock.f08](README/support_system_clock.md)
 
 ## support_allocation.f08
 

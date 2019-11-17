@@ -1,78 +1,81 @@
 !----------------------------------------------------------------------------------------------------------------------------------!
 ! [target]                                                                                                                         !
-! to use SYSTEM_CLOCK                                                                                                              !
+! support to use SYSTEM_CLOCK                                                                                                      !
 !----------------------------------------------------------------------------------------------------------------------------------!
-module support_system_clock
+
+module moduleSupportSystemClock
 
   ! <module>s to import
   use, intrinsic :: iso_fortran_env
-
-
-  ! require all variables to be explicitly declared
+  
+   ! require all variables to be explicitly declared
   implicit none
 
-
-  ! accessibility of <subroutine>s, <function>s and <type>s in this <module>
-  public :: Type_System_Clock
-  public :: SYSTEM_CLOCK_ElapsedTime
-  public :: SYSTEM_CLOCK_UsingType
-
-
-  ! <interface> for this <module>
-  interface SYSTEM_CLOCK
-    module procedure :: SYSTEM_CLOCK_UsingType
-  end interface
-
+  ! accessibility of the <subroutine>s and <function>s in this <module>
+  public  :: typeSysClock
+  private :: getDataSystemClock ! subroutine
+  public  :: calcElapsedTime    ! function
 
   ! <type>s for this <module>
-  type Type_System_Clock
-    integer( kind=INT64 ), public :: count
-    integer( kind=INT64 ), public :: count_rate
-    integer( kind=INT64 ), public :: count_max
-  end type Type_System_Clock
+  type typeSysClock
+    integer(INT64), private :: count
+    integer(INT64), private :: count_rate
+    integer(INT64), private :: count_max
+  end type typeSysClock
 
+  ! <interface>s for this <module>
+  interface system_clock
+    module procedure :: getDataSystemClock
+  end interface system_clock
 
-  ! <subroutine>s and <function>s for this <module>
+  ! contained <subroutine>s and <function>s are below
   contains
 
+  subroutine getDataSystemClock ( objToStoreData )
 
-  ! call <SYSTEM_CLOCK> using a structure which is define here
-  subroutine SYSTEM_CLOCK_UsingType( struct )
+    ! arguments for this <subroutine>
+    type(typeSysClock), intent(out) :: objToStoreData
 
-    ! argument for this <subroutine>
-    type(Type_System_Clock), intent(inout) :: struct
+    ! STEP.01/01
+    ! call intrinsic subroutine <SYSTEM_CLOCK>
+    call system_clock(                        &!
+      count      = objToStoreData%count,      &!
+      count_rate = objToStoreData%count_rate, &!
+      count_max  = objToStoreData%count_max   &!
+    )
 
-    ! call <SYSTEM_CLOCK>
-    call SYSTEM_CLOCK( struct%count, struct%count_rate, struct%count_max )
-
-    ! return the parent process
+    ! STEP.END
     return
 
-  end subroutine SYSTEM_CLOCK_UsingType
+  end subroutine getDataSystemClock
 
+  pure function calcElapsedTime ( objClockBegin, objClockEnd ) result( valElapsedTime )
 
-  ! calculate the spend time using <SYSTEM_CLOCK>
-  ! [reference]
-  ! http://www.nag-j.co.jp/fortran/tips/tips_PortableWayToTime.html#_PortableWayToTime
-  pure function SYSTEM_CLOCK_ElapsedTime( start, stop ) result( elapsed_time )
-
-    ! argument for this <function>
-    type(Type_System_Clock), intent(in) :: start
-    type(Type_System_Clock), intent(in) :: stop
+    ! arguments for this <function>
+    type(typeSysClock), intent(in) :: objClockBegin, objClockEnd
 
     ! return value of this <function>
-    real( kind=REAL64 ) :: elapsed_time
+    real(REAL64) :: valElapsedTime
 
-    if( stop%count .lt. start%count ) then
-      elapsed_time = real( ( stop%count_max - start%count ) + stop%count + 1_INT64, kind= REAL64 ) / real( stop%count_rate )
-      return
+    ! STEP.01/02
+    ! calculate the `count` increment of the <SYSTEM_CLOCK>
+    if ( objClockEnd%count .lt. objClockEnd%count ) then
+      valElapsedTime = real( objClockEnd%count_max - objClockBegin%count + objClockEnd%count + 1_INT64, kind = REAL64 )
     else
-      elapsed_time = real( stop%count - start%count, kind= REAL64 ) / real( stop%count_rate )
-      return
+      valElapsedTime = real( objClockEnd%count - objClockBegin%count, kind = REAL64 )
     end if
 
+    ! STEP.02/02
+    ! calculate the elapsed time
+    valElapsedTime = valElapsedTime / objClockEnd%count_rate
 
-  end function SYSTEM_CLOCK_ElapsedTime
+    ! STEP.END
+    return
 
+  end function calcElapsedTime
 
-end module support_system_clock
+end module moduleSupportSystemClock
+
+!----------------------------------------------------------------------------------------------------------------------------------!
+! End of the file                                                                                                                  !
+!----------------------------------------------------------------------------------------------------------------------------------!
